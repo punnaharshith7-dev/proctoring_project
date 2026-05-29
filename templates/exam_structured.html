@@ -1225,10 +1225,14 @@
         function getEvidenceFrame() {
             if (video.videoWidth) {
                 const canvas = document.createElement('canvas');
-                canvas.width = 640;
-                canvas.height = 480;
-                canvas.getContext('2d').drawImage(video, 0, 0, 640, 480);
-                latestEvidenceFrame = canvas.toDataURL('image/jpeg', 0.72);
+                const sourceWidth = Math.max(1, video.videoWidth || 320);
+                const sourceHeight = Math.max(1, video.videoHeight || 240);
+                const targetWidth = Math.min(320, sourceWidth);
+                const targetHeight = Math.max(1, Math.round(sourceHeight * (targetWidth / sourceWidth)));
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0, targetWidth, targetHeight);
+                latestEvidenceFrame = canvas.toDataURL('image/jpeg', 0.6);
             }
             return latestEvidenceFrame;
         }
