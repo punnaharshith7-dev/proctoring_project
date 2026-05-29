@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ exam_payload.paper_title }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='tilt-effects.css') }}">
+    <script src="{{ url_for('static', filename='tilt-effects.js') }}" defer></script>
+    <style>
+        :root{
+            --bg:#f4f7f6;
+            --bg-soft:#eef6ff;
+            --panel:rgba(255,255,255,.92);
+            --panel-strong:rgba(255,255,255,.98);
+            --line:rgba(137,160,188,.18);
+            --text:#1f2a36;
+            --muted:#66768d;
+            --primary:#23a6d5;
+            --primary-strong:#1f7ae0;
+            --teal:#18a07f;
+            --gold:#c87d00;
+            --danger:#cc4665;
+            --danger-soft:rgba(231,60,126,.12);
+            --ok-soft:rgba(24,160,127,.12);
+            --shadow:0 20px 45px rgba(15,32,56,.12);
+        }
+        *{box-sizing:border-box;margin:0;padding:0}
+        html,body{min-height:100%;height:100%}
+        body{
+            font-family:'Plus Jakarta Sans',sans-serif;
+            color:var(--text);
+            display:flex;
+            background:
+                radial-gradient(circle at top left, rgba(35,166,213,.12), transparent 22%),
+                radial-gradient(circle at bottom right, rgba(24,160,127,.08), transparent 18%),
+                linear-gradient(160deg, #f7fbff 0%, #f4f7f6 45%, #eef4fb 100%);
+            height:100vh;
+            overflow:hidden;
+            transition:opacity .28s ease, transform .28s ease;
+        }
+        body.page-ready{opacity:1;transform:translateY(0)}
+        body.page-exit{opacity:0;transform:translateY(8px)}
+        #submit-modal,#result-screen{position:fixed;inset:0;z-index:2000}
+        #permission-shield{
+            position:fixed;
+            inset:0;
+            display:flex;align-items:flex-start;justify-content:center;padding:28px;
+            min-height:100vh;min-height:100dvh;
+            background:rgba(244,247,246,.96);backdrop-filter:blur(10px);overflow:auto;
+            z-index:9999
+        }
+        .gateway-shell{
+            width:min(1080px,100%);
+            background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,251,255,.98));
+            border:1px solid rgba(137,160,188,.18);
+            border-radius:32px;
+            box-shadow:var(--shadow);
+            display:grid;
+            grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);
+            overflow:hidden;
+            margin:0 auto
+        }
+        .gateway-shell > *{min-height:0}
+        .gateway-main,.gateway-side{padding:24px;min-height:0;overflow:hidden}
+        .gateway-main{
+            background:
+                linear-gradient(145deg, rgba(35,166,213,.08), transparent 45%),
+                linear-gradient(0deg, rgba(255,255,255,.01), rgba(255,255,255,.01))
+        }
+        .gateway-side{border-left:1px solid rgba(137,160,188,.14);background:rgba(244,249,255,.86)}
+        .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:14px}
+        .gateway-main h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,4vw,3.1rem);margin-bottom:14px}
+        .lead{color:var(--muted);line-height:1.75;max-width:640px}
+        .readiness-grid,.gateway-kpis,.status-ribbon,.summary-grid,.top-bar-grid,.trust-grid,.progress-grid{display:grid;gap:14px}
+        .gateway-kpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-top:16px}
+        .kpi-card,.check-card,.sidebar-card,.section-card,.question-card,.review,.summary-chip,.modal,.status-card{
+            border:1px solid var(--line);
+            background:var(--panel);
+            border-radius:24px;
+            box-shadow:var(--shadow)
+        }
+        .kpi-card{padding:16px}
+        .kpi-label{font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+        .kpi-value{font-family:'Space Grotesk',sans-serif;font-size:1.5rem}
+        .readiness-grid{margin-top:14px}
+        .check-card{padding:18px;background:rgba(255,255,255,.88)}
+        .check-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid rgba(137,160,188,.1)}
+        .check-row:last-child{border-bottom:none;padding-bottom:0}
+        .check-row:first-child{padding-top:0}
+        .check-copy strong{display:block;margin-bottom:5px}
+        .check-copy span{font-size:.86rem;color:var(--muted)}
+        .check-status{min-width:108px;text-align:center;padding:9px 12px;border-radius:999px;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+        .check-status.pending{background:rgba(244,179,61,.14);color:var(--gold)}
+        .check-status.ok{background:var(--ok-soft);color:var(--teal)}
+        .check-status.error{background:var(--danger-soft);color:var(--danger)}
+        .face-verify-shell{
+            margin-top:16px;padding:16px;border-radius:24px;border:1px solid rgba(35,166,213,.18);
+            background:linear-gradient(180deg, rgba(35,166,213,.08), rgba(35,166,213,.02))
+        }
+        .scan-stage{position:relative;height:124px;border-radius:20px;background:linear-gradient(180deg, #f5faff, #edf4fb);overflow:hidden;border:1px solid rgba(137,160,188,.14)}
+        .scan-stage::before{
+            content:"";position:absolute;inset:18px;border:1px solid rgba(35,166,213,.3);border-radius:18px
+        }
+        .scan-line{
+            position:absolute;left:24px;right:24px;height:2px;top:24px;border-radius:999px;
+            background:linear-gradient(90deg, transparent, rgba(35,166,213,.2), #23a6d5, rgba(35,166,213,.2), transparent);
+            box-shadow:0 0 24px rgba(35,166,213,.35);
+            opacity:0;
+            transform:translateY(0)
+        }
+        .scan-stage.scanning .scan-line{opacity:1;animation:scanMove 1.5s linear infinite}
+        .scan-stage.success{box-shadow:inset 0 0 0 1px rgba(24,160,127,.28), 0 0 28px rgba(24,160,127,.12)}
+        .scan-stage.error{animation:shakeX .34s ease}
+        .scan-face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3.1rem;color:rgba(31,42,54,.78)}
+        .scan-caption{margin-top:10px;color:var(--muted);line-height:1.6}
+        .actions{display:flex;gap:12px;flex-wrap:wrap}
+        button{
+            border:none;border-radius:16px;padding:13px 18px;font-weight:700;cursor:pointer;
+            font:inherit;transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease
+        }
+        button:hover{transform:translateY(-1px)}
+        button:disabled{opacity:.65;cursor:not-allowed;transform:none}
+        .primary{background:linear-gradient(135deg,var(--primary),var(--primary-strong));color:#04101b;box-shadow:0 14px 28px rgba(30,140,255,.26)}
+        .secondary{background:rgba(137,160,188,.14);color:var(--text);border:1px solid rgba(137,160,188,.12)}
+        .sidebar-card{padding:18px}
+        .sidebar-title{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--primary);margin-bottom:10px}
+        #sidebar{width:380px;min-width:380px;background:rgba(255,255,255,.82);border-right:1px solid rgba(137,160,188,.12);padding:20px;display:none;flex-direction:column;gap:14px;overflow:auto}
+        #webcam-shell{position:relative;border-radius:22px;overflow:hidden;background:#000}
+        video{width:100%;display:block;transform:scaleX(-1)}
+        .camera-overlay{
+            position:absolute;inset:14px;border-radius:18px;border:1px solid rgba(35,166,213,.28);pointer-events:none;
+            box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)
+        }
+        .camera-overlay::before,.camera-overlay::after{
+            content:"";position:absolute;width:28px;height:28px;border-color:#5bd2ff;border-style:solid
+        }
+        .camera-overlay::before{top:-1px;left:-1px;border-width:2px 0 0 2px;border-top-left-radius:16px}
+        .camera-overlay::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;border-bottom-right-radius:16px}
+        .status-ribbon{grid-template-columns:repeat(2,minmax(0,1fr))}
+        .status-card{padding:16px;background:rgba(255,255,255,.65)}
+        .status-card strong{display:block;margin-bottom:6px}
+        .status-copy{font-size:.9rem;color:var(--muted);line-height:1.6}
+        .meter{height:10px;border-radius:999px;background:rgba(137,160,188,.14);overflow:hidden}
+        #audio-level{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--primary),var(--gold))}
+        .trust-grid{grid-template-columns:112px 1fr;align-items:center}
+        .trust-badge{
+            width:112px;height:112px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+            background:conic-gradient(var(--teal) 0turn, rgba(137,160,188,.14) 0turn);
+            position:relative
+        }
+        .trust-badge::before{
+            content:"";position:absolute;inset:10px;border-radius:50%;background:rgba(255,255,255,.96);border:1px solid rgba(137,160,188,.08)
+        }
+        .trust-badge span{position:relative;z-index:1;font-family:'Space Grotesk',sans-serif;font-size:1.9rem}
+        .trust-copy strong{display:block;font-size:1.05rem;margin-bottom:6px}
+        .trust-copy p{color:var(--muted);line-height:1.6;font-size:.92rem}
+        .violation-score{padding:16px;border-radius:18px;background:rgba(255,255,255,.72);border:1px solid rgba(137,160,188,.12)}
+        .violation-score strong{display:block;font-size:1.15rem;margin:6px 0 4px}
+        #status-log{max-height:260px;overflow:auto;padding-right:4px}
+        .alert-item{
+            background:rgba(255,255,255,.04);border-left:3px solid var(--danger);padding:12px;border-radius:14px;
+            margin-bottom:10px;font-size:.84rem;line-height:1.55;animation:slideUp .34s ease
+        }
+        #main-wrapper{
+            display:none;
+            min-width:0;
+            flex:1;
+            min-height:100vh;
+            height:100vh;
+            overflow:hidden;
+            flex-direction:column
+        }
+        #top-nav{
+            display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:16px;padding:18px 22px;
+            border-bottom:1px solid rgba(137,160,188,.12);background:rgba(255,255,255,.84);backdrop-filter:blur(12px);
+            position:sticky;top:0;z-index:80;flex:0 0 auto
+        }
+        .top-bar-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+        .top-bar-card{
+            padding:14px 16px;border-radius:18px;border:1px solid rgba(137,160,188,.12);background:rgba(255,255,255,.72)
+        }
+        .top-bar-card span{display:block;color:var(--muted);font-size:.78rem;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em}
+        .top-bar-card strong{font-size:.96rem}
+        .timer-wrap{
+            display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:22px;
+            border:1px solid rgba(200,125,0,.18);background:rgba(200,125,0,.08)
+        }
+        .timer-ring{width:64px;height:64px;position:relative}
+        .timer-ring svg{transform:rotate(-90deg)}
+        .timer-ring circle{fill:none;stroke-width:8}
+        .timer-ring .bg{stroke:rgba(255,255,255,.08)}
+        .timer-ring .progress{stroke:var(--gold);stroke-linecap:round;transition:stroke-dashoffset .5s ease, stroke .3s ease}
+        .timer-meta strong{display:block;font-family:'Space Grotesk',sans-serif;font-size:1.4rem}
+        .timer-meta span{display:block;font-size:.8rem;color:var(--muted);margin-top:3px}
+        #exam-shell{
+            display:grid;
+            grid-template-columns:280px minmax(0,1fr);
+            min-height:0;
+            flex:1;
+            overflow:hidden;
+            align-items:start
+        }
+        #progress-rail{
+            position:sticky;top:0;height:100%;min-height:0;overflow:auto;padding:18px;border-right:1px solid rgba(137,160,188,.1);
+            background:rgba(248,251,255,.92)
+        }
+        .rail-card{padding:18px;border-radius:24px;border:1px solid rgba(137,160,188,.12);background:rgba(255,255,255,.72);margin-bottom:16px}
+        .rail-title{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--primary);margin-bottom:12px}
+        .progress-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+        .progress-pill{
+            height:42px;border-radius:14px;border:1px solid rgba(137,160,188,.14);background:rgba(255,255,255,.72);
+            color:var(--text);font-weight:700
+        }
+        .progress-pill.answered{background:rgba(43,214,176,.12);border-color:rgba(43,214,176,.22)}
+        .progress-pill.flagged{background:rgba(244,179,61,.15);border-color:rgba(244,179,61,.28)}
+        .progress-pill.active{box-shadow:0 0 0 2px rgba(69,194,255,.34) inset}
+        .flag-summary{display:flex;justify-content:space-between;color:var(--muted);font-size:.9rem}
+        .rail-section-link{
+            width:100%;text-align:left;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.72);color:var(--text);
+            border:1px solid rgba(137,160,188,.1);margin-bottom:10px
+        }
+        #exam-paper{
+            height:100%;
+            min-height:0;
+            overflow:auto;
+            padding:22px 24px 34px;
+            scroll-behavior:smooth;
+            scrollbar-gutter:stable
+        }
+        .shell{max-width:1040px;margin:0 auto}
+        .panel{padding:24px;border-radius:28px;border:1px solid rgba(137,160,188,.14);background:rgba(255,255,255,.82);box-shadow:var(--shadow);margin-bottom:18px}
+        .panel h1{font-family:'Space Grotesk',sans-serif;font-size:2rem;margin-bottom:10px}
+        .muted{color:var(--muted);line-height:1.7}
+        .pattern{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:18px}
+        .chip,.summary-chip{padding:16px;border-radius:18px;background:rgba(255,255,255,.72);border:1px solid rgba(137,160,188,.12)}
+        .section-card{padding:20px;margin-bottom:18px;position:relative;overflow:hidden;animation:cardReveal .5s ease both;background:rgba(255,255,255,.82)}
+        .section-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}
+        .section-card h2{font-family:'Space Grotesk',sans-serif;margin-bottom:6px}
+        .section-copy{color:var(--muted);line-height:1.6}
+        .section-actions{display:flex;gap:10px;flex-wrap:wrap}
+        .nav-mini{padding:10px 14px;border-radius:14px;font-size:.9rem}
+        .question-stack{display:grid;gap:14px}
+        .question-card{padding:18px;border-radius:20px;background:rgba(255,255,255,.72);transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+        .question-card.active{border-color:rgba(69,194,255,.34);box-shadow:0 0 0 2px rgba(69,194,255,.18) inset}
+        .question-card.flagged{border-color:rgba(244,179,61,.28)}
+        .question-card.answered{box-shadow:0 0 0 1px rgba(43,214,176,.16) inset}
+        .qmeta{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:.86rem;margin-bottom:12px}
+        .question-card h3{font-size:1rem;line-height:1.7;margin-bottom:14px}
+        .question-tools{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}
+        .opt{display:block;padding:13px;border:1px solid rgba(137,160,188,.16);border-radius:16px;margin:10px 0;background:rgba(255,255,255,.65);transition:border-color .18s ease, transform .18s ease}
+        .opt:hover{border-color:rgba(69,194,255,.22);transform:translateX(2px)}
+        input[type=text]{width:100%;padding:14px 15px;border-radius:16px;border:1px solid rgba(137,160,188,.18);background:rgba(255,255,255,.88);color:var(--text)}
+        .flag-btn.active{background:rgba(244,179,61,.16);color:var(--gold)}
+        .section-focus{animation:sectionPulse .55s ease}
+        .exam-submit-footer{
+            margin-top:18px;
+            padding:18px 0 0;
+        }
+        #submit-modal{display:none;background:rgba(14,22,34,.55);align-items:center;justify-content:center;padding:24px;overflow:auto;z-index:2500}
+        .modal{max-width:540px;width:100%;max-height:calc(100dvh - 48px);overflow:auto;padding:24px;background:var(--panel-strong)}
+        .modal p{margin:14px 0 18px;color:var(--muted);line-height:1.7}
+        #result-screen{
+            display:none;
+            flex-direction:column;
+            align-items:flex-start;
+            justify-content:flex-start;
+            background:linear-gradient(180deg,#f7fbff 0%,#eef4fb 100%);
+            overflow:auto;
+            padding:24px
+        }
+        .score{
+            width:176px;height:176px;border-radius:50%;display:flex;flex-direction:column;justify-content:center;align-items:center;
+            margin:18px auto;background:rgba(255,255,255,.92);border:10px solid rgba(24,160,127,.18)
+        }
+        .score strong{font-family:'Space Grotesk',sans-serif;font-size:2.8rem;color:var(--teal)}
+        .summary-grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+        .review{padding:22px;margin-top:18px}
+        .review-item{border:1px solid rgba(137,160,188,.14);border-radius:16px;padding:14px;margin-top:12px;background:rgba(255,255,255,.72)}
+        .badge{display:inline-flex;padding:6px 10px;border-radius:999px;font-size:.76rem;font-weight:700}
+        .ok{background:var(--ok-soft);color:var(--teal)}
+        .bad{background:var(--danger-soft);color:var(--danger)}
+        #toast-stack{
+            position:fixed;top:20px;right:20px;z-index:2600;display:grid;gap:12px;max-width:min(360px,calc(100vw - 30px))
+        }
+        .toast{
+            padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.98);border:1px solid rgba(137,160,188,.14);
+            box-shadow:var(--shadow);transform:translateX(16px);opacity:0;animation:toastIn .28s ease forwards
+        }
+        .toast strong{display:block;margin-bottom:5px}
+        .toast p{color:var(--muted);font-size:.9rem;line-height:1.55}
+        .toast.danger{border-color:rgba(255,95,127,.3)}
+        .toast.info{border-color:rgba(69,194,255,.26)}
+        .toast.warn{border-color:rgba(244,179,61,.28)}
+        @keyframes scanMove{0%{transform:translateY(0)}100%{transform:translateY(130px)}}
+        @keyframes shakeX{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes toastIn{to{opacity:1;transform:translateX(0)}}
+        @keyframes sectionPulse{0%{transform:translateY(4px)}60%{transform:translateY(0)}100%{transform:translateY(0)}}
+        @keyframes cardReveal{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+        @media(max-width:1280px){
+            #sidebar{width:340px;min-width:340px}
+            #exam-shell{grid-template-columns:250px minmax(0,1fr)}
+        }
+        @media(max-width:1120px){
+            body{display:block;overflow:auto;height:auto}
+            .gateway-shell{grid-template-columns:1fr}
+            .gateway-side{border-left:none;border-top:1px solid rgba(143,177,214,.14)}
+            .gateway-shell{max-height:none}
+            .gateway-main,.gateway-side{overflow:visible;max-height:none}
+            #main-wrapper{display:block;height:auto;min-height:100vh;overflow:visible}
+            #top-nav{position:static}
+            #sidebar,#exam-shell,#top-nav{position:static}
+            #sidebar{width:100%;min-width:0;max-height:none}
+            #exam-shell{grid-template-columns:1fr;height:auto;overflow:visible}
+            #progress-rail{height:auto;position:static;border-right:none;border-bottom:1px solid rgba(143,177,214,.1);overflow:visible}
+            #exam-paper{height:auto;overflow:visible}
+        }
+        @media(max-width:760px){
+            #permission-shield{padding:16px}
+            .gateway-main,.gateway-side,#sidebar,#exam-paper{padding:18px}
+            #top-nav{grid-template-columns:1fr;gap:12px}
+            .top-bar-grid,.status-ribbon,.trust-grid,.summary-grid,.progress-grid{grid-template-columns:1fr}
+            .timer-wrap{justify-content:center}
+            .section-head,.question-tools{flex-direction:column;align-items:flex-start}
+            .actions button,.section-actions button{width:100%}
+            .progress-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, body, body.page-ready, body.page-exit { transition:none !important; animation:none !important; transform:none !important; scroll-behavior:auto !important; }
+        }
+    </style>
+</head>
+    <body onclick="startAudio()">
+    <div id="toast-stack"></div>
+
+    <div id="permission-shield">
+        <div class="gateway-shell">
+            <div class="gateway-main">
+                <div class="eyebrow">Secure Exam Gateway</div>
+                <h1>{{ exam_payload.paper_title }}</h1>
+                <p class="lead">Enable camera and microphone, confirm your environment is stable, and verify your face before starting your Year {{ year_group }} assessment. The older workflow stays intact, but this checklist helps you enter cleanly and safely.</p>
+                <div class="gateway-kpis">
+                    <div class="kpi-card">
+                        <div class="kpi-label">Duration</div>
+                        <div class="kpi-value">{{ exam_settings.exam_duration_minutes }} min</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Question Mix</div>
+                        <div class="kpi-value">30 Questions</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Reconnect Guard</div>
+                        <div class="kpi-value">Ready</div>
+                    </div>
+                </div>
+                <div class="face-verify-shell">
+                    <div class="eyebrow" style="margin-bottom:10px;">Face Verification</div>
+                    <div id="scan-stage" class="scan-stage">
+                        <div class="scan-line"></div>
+                        <div class="scan-face">O</div>
+                    </div>
+                    <p id="face-status" class="scan-caption">Face verification pending. Keep your face centered and use similar lighting to the saved profile photo.</p>
+                </div>
+                <div class="check-card" style="margin-top:22px;">
+                    <div class="eyebrow" style="margin-bottom:10px;">Readiness Checklist</div>
+                    <div class="readiness-grid">
+                        <div class="check-row">
+                            <div class="check-copy"><strong>Camera working</strong><span>Live frame must be available before the exam opens.</span></div>
+                            <div class="check-status pending" id="check-camera">Pending</div>
+                        </div>
+                        <div class="check-row">
+                            <div class="check-copy"><strong>Microphone working</strong><span>Audio access is checked when device permissions are granted.</span></div>
+                            <div class="check-status pending" id="check-mic">Pending</div>
+                        </div>
+                        <div class="check-row">
+                            <div class="check-copy"><strong>Face verified</strong><span>Your live image must match the saved profile photo.</span></div>
+                            <div class="check-status pending" id="check-face">Pending</div>
+                        </div>
+                        <div class="check-row">
+                            <div class="check-copy"><strong>Internet stable</strong><span>Live online status is monitored before and during the paper.</span></div>
+                            <div class="check-status pending" id="check-network">Pending</div>
+                        </div>
+                        <div class="check-row">
+                            <div class="check-copy"><strong>Fullscreen enabled</strong><span>Use the secure full-view mode before starting the paper.</span></div>
+                            <div class="check-status pending" id="check-fullscreen">Pending</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="face-verify-shell" style="display:none;">
+                    <div class="eyebrow" style="margin-bottom:10px;">Face Verification</div>
+                    <div id="scan-stage" class="scan-stage">
+                        <div class="scan-line"></div>
+                        <div class="scan-face">◎</div>
+                    </div>
+                    <p id="face-status" class="scan-caption">Face verification pending.</p>
+                </div>
+            </div>
+            <div class="gateway-side">
+                <div class="sidebar-card">
+                    <div class="sidebar-title">Environment Notes</div>
+                    <p class="muted">Stay centered in frame, keep the microphone active, avoid switching tabs, and use fullscreen mode throughout the attempt.</p>
+                </div>
+                <div class="sidebar-card">
+                    <div class="sidebar-title">Resume Support</div>
+                    <p class="muted" id="resume-copy">If the page refreshes accidentally, your local answers and timer can be restored when the active attempt is still open.</p>
+                </div>
+                <div class="sidebar-card">
+                    <div class="sidebar-title">Start Controls</div>
+                    <div class="actions" style="margin-top:10px;">
+                        <button id="enable-media-btn" class="secondary" type="button" onclick="initMedia()">Enable Camera And Mic</button>
+                        <button id="fullscreen-btn" class="secondary" type="button" onclick="enableFullscreen()">Enable Fullscreen</button>
+                        <button id="verify-face-btn" class="primary" type="button" onclick="verifyFaceAndStart()">Verify Face And Start</button>
+                        <button id="resume-btn" class="secondary" type="button" onclick="resumeSavedAttempt()" style="display:none;">Resume Saved Attempt</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sidebar">
+        <div class="sidebar-card">
+            <div class="sidebar-title">Live AI Monitoring</div>
+            <div id="webcam-shell">
+                <video id="webcam" autoplay playsinline muted></video>
+                <div class="camera-overlay"></div>
+            </div>
+        </div>
+        <div class="status-ribbon">
+            <div class="status-card">
+                <strong>Mic State</strong>
+                <div class="status-copy" id="mic-status-copy">Waiting for microphone access.</div>
+            </div>
+            <div class="status-card">
+                <strong>Exam State</strong>
+                <div class="status-copy" id="exam-state-copy">Readiness gate is still active.</div>
+            </div>
+        </div>
+        <div class="sidebar-card">
+            <div class="sidebar-title">Environmental Audio</div>
+            <div class="meter"><div id="audio-level"></div></div>
+        </div>
+        <div class="sidebar-card">
+            <div class="sidebar-title">Live Trust Meter</div>
+            <div class="trust-grid">
+                <div class="trust-badge" id="trust-badge"><span id="trust-score-value">0</span></div>
+                <div class="trust-copy">
+                    <strong id="trust-label">Low Risk</strong>
+                    <p id="trust-description">No major proctoring concerns so far. Maintain a stable frame, active mic, and fullscreen focus.</p>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar-card">
+            <div class="sidebar-title">Violation Score</div>
+            <div class="violation-score">
+                <div style="font-size:.78rem;color:#c7d1de">Score against auto-submit threshold</div>
+                <strong id="violation-score-value">0 / 20</strong>
+                <div id="violation-score-note" style="font-size:.82rem;color:#c7d1de;margin-top:4px">Updated live after each violation.</div>
+            </div>
+        </div>
+        <div class="sidebar-card">
+            <div class="sidebar-title">Monitoring Log</div>
+            <div id="status-log"></div>
+        </div>
+    </div>
+
+    <div id="main-wrapper">
+        <div id="top-nav">
+            <div class="top-bar-grid">
+                <div class="top-bar-card"><span>Student</span><strong>{{ student_name }}</strong></div>
+                <div class="top-bar-card"><span>Roll Number</span><strong>{{ student_id }}</strong></div>
+                <div class="top-bar-card"><span>Year Group</span><strong>Year {{ year_group }}</strong></div>
+            </div>
+            <div class="timer-wrap">
+                <div class="timer-ring">
+                    <svg viewBox="0 0 64 64">
+                        <circle class="bg" cx="32" cy="32" r="26"></circle>
+                        <circle class="progress" id="timer-progress" cx="32" cy="32" r="26"></circle>
+                    </svg>
+                </div>
+                <div class="timer-meta">
+                    <strong id="timer">60:00</strong>
+                    <span id="timer-note">Secure timer is running.</span>
+                </div>
+            </div>
+            <div class="actions" style="justify-content:flex-end;">
+                <button class="secondary" type="button" onclick="enableFullscreen()">Fullscreen</button>
+                <button class="primary" id="submit-btn" onclick="confirmSubmit()">Submit Exam</button>
+            </div>
+        </div>
+        <div id="exam-shell">
+            <div id="progress-rail">
+                <div class="rail-card">
+                    <div class="rail-title">Progress Rail</div>
+                    <div class="flag-summary"><span>Answered: <strong id="answered-count">0</strong></span><span>Flagged: <strong id="flagged-count">0</strong></span></div>
+                    <div class="progress-grid" id="progress-grid" style="margin-top:14px;"></div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-title">Section Navigator</div>
+                    <div id="section-nav-links"></div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-title">Reconnect Recovery</div>
+                    <p class="muted" id="restore-summary">No saved answers detected yet.</p>
+                </div>
+            </div>
+            <div id="exam-paper">
+                <div class="shell">
+                    <div class="panel">
+                        <h1>{{ exam_payload.paper_title }}</h1>
+                        <p class="muted">Questions remain shuffled for your student ID. The new layout adds section navigation, progress visibility, and reconnect support without removing the original exam flow.</p>
+                        <div class="pattern">
+                            <div class="chip"><strong>Section A</strong><div class="muted">10 MCQs | 20 marks</div></div>
+                            <div class="chip"><strong>Section B</strong><div class="muted">10 True / False | 20 marks</div></div>
+                            <div class="chip"><strong>Section C</strong><div class="muted">10 Fill Blanks | 10 marks</div></div>
+                        </div>
+                    </div>
+                    <div id="questions-container"></div>
+                    <div class="actions exam-submit-footer"><button class="primary" onclick="confirmSubmit()">Submit Exam</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="submit-modal">
+        <div class="modal">
+            <h2>Confirm Submission</h2>
+            <p>Your answers will be graded immediately and you will still receive section-wise analysis with correct answers, explanations, and risk summary after submission.</p>
+            <div class="actions" style="justify-content:center;">
+                <button class="primary" id="confirm-submit-btn" onclick="finalProcess()">Yes, Submit</button>
+                <button class="secondary" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <div class="shell">
+            <div class="panel" style="text-align:center">
+                <h1 id="result-title">Assessment Submitted</h1>
+                <div class="score"><strong id="final-score">0</strong><span id="score-total">/ 50</span></div>
+                <p class="muted" id="result-risk-copy">Section-wise performance and question analysis are shown below.</p>
+                <div class="summary-grid" id="section-summary"></div>
+                <div class="summary-grid" id="suggestion-summary" style="margin-top:16px;"></div>
+                <div class="actions" style="justify-content:center;margin-top:18px;">
+                    <button class="secondary" onclick="transitionTo('/student_dashboard')">Back to Dashboard</button>
+                    <button class="primary" onclick="transitionTo('/logout')">Exit Portal</button>
+                </div>
+            </div>
+            <div id="analysis-container"></div>
+        </div>
+    </div>
+
+    <script>
+        const socket = window.io ? io() : {
+            emit() {},
+            on() {},
+            disconnect() {}
+        };
+        if (!window.io) {
+            console.warn('Socket.IO client was not available. Proctoring events will be disabled, but the exam UI will still work.');
+        }
+        const examPayload = {{ exam_payload|tojson }};
+        const resumeState = {{ resume_state|tojson }};
+        const studentInfo = "{{ student_id }} - {{ student_name }}";
+        const studentId = "{{ student_id }}";
+        const studentName = "{{ student_name }}";
+        const yearGroup = {{ year_group }};
+        const examDurationMinutes = {{ exam_settings.exam_duration_minutes or 60 }};
+        const storageKey = `exam-state:${studentId}:${yearGroup}`;
+        const totalDurationSeconds = examDurationMinutes * 60;
+        const ringRadius = 26;
+        const ringCircumference = 2 * Math.PI * ringRadius;
+
+        const video = document.getElementById('webcam');
+        const log = document.getElementById('status-log');
+        const audioBar = document.getElementById('audio-level');
+        const timerDisplay = document.getElementById('timer');
+        const timerProgress = document.getElementById('timer-progress');
+        const timerNote = document.getElementById('timer-note');
+        const faceStatus = document.getElementById('face-status');
+        const verifyFaceBtn = document.getElementById('verify-face-btn');
+        const enableMediaBtn = document.getElementById('enable-media-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const resumeBtn = document.getElementById('resume-btn');
+        const violationScoreValue = document.getElementById('violation-score-value');
+        const violationScoreNote = document.getElementById('violation-score-note');
+        const trustBadge = document.getElementById('trust-badge');
+        const trustScoreValue = document.getElementById('trust-score-value');
+        const trustLabel = document.getElementById('trust-label');
+        const trustDescription = document.getElementById('trust-description');
+        const progressGrid = document.getElementById('progress-grid');
+        const answeredCount = document.getElementById('answered-count');
+        const flaggedCount = document.getElementById('flagged-count');
+        const sectionNavLinks = document.getElementById('section-nav-links');
+        const restoreSummary = document.getElementById('restore-summary');
+        const micStatusCopy = document.getElementById('mic-status-copy');
+        const examStateCopy = document.getElementById('exam-state-copy');
+        const scanStage = document.getElementById('scan-stage');
+        const toastStack = document.getElementById('toast-stack');
+
+        timerProgress.style.strokeDasharray = `${ringCircumference} ${ringCircumference}`;
+        timerProgress.style.strokeDashoffset = ringCircumference;
+
+        let audioCtx;
+        let streamRef = null;
+        let timeLeft = totalDurationSeconds;
+        let timerStarted = false;
+        let examSubmitted = false;
+        let submitting = false;
+        let aiInterval = null;
+        let liveStatusInterval = null;
+        let persistInterval = null;
+        let timerInterval = null;
+        let lastAudioEmitAt = 0;
+        let latestEvidenceFrame = '';
+        let faceVerified = false;
+        let faceMatchScore = 0;
+        let localViolationCount = 0;
+        let localViolationScore = 0;
+        let autoSubmitTriggered = false;
+        let autoSubmittedByViolations = false;
+        let lastActivityAt = Date.now();
+        let afkReported = false;
+        let isResuming = false;
+        let activeQuestionId = '';
+        let currentRiskLabel = 'Low';
+        let currentRiskScore = 0;
+        let questionState = {};
+        let lastAnnouncementAt = '';
+
+        const esc = (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+        function defaultQuestionState() {
+            const state = {};
+            examPayload.sections.forEach(section => section.questions.forEach(question => {
+                state[question.id] = { answered: false, flagged: false, value: '' };
+            }));
+            return state;
+        }
+
+        function safeParseStorage() {
+            try {
+                const raw = localStorage.getItem(storageKey);
+                return raw ? JSON.parse(raw) : null;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function hasSavedAttempt() {
+            const saved = safeParseStorage();
+            return !!(saved && saved.answers && Object.keys(saved.answers).length);
+        }
+
+        function setChecklistStatus(id, status, label) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.className = `check-status ${status}`;
+            el.textContent = label;
+        }
+
+        function updateNetworkStatus() {
+            const online = navigator.onLine;
+            setChecklistStatus('check-network', online ? 'ok' : 'error', online ? 'Stable' : 'Offline');
+            if (!online && timerStarted && !examSubmitted) {
+                showToast('Connection warning', 'Your network dropped. Answers are still being saved locally for resume support.', 'warn');
+            }
+        }
+
+        function updateFullscreenStatus() {
+            const full = !!document.fullscreenElement;
+            setChecklistStatus('check-fullscreen', full ? 'ok' : 'pending', full ? 'Enabled' : 'Pending');
+        }
+
+        function updateMediaChecklist() {
+            setChecklistStatus('check-camera', video.videoWidth ? 'ok' : 'pending', video.videoWidth ? 'Ready' : 'Pending');
+            setChecklistStatus('check-mic', streamRef ? 'ok' : 'pending', streamRef ? 'Ready' : 'Pending');
+            setChecklistStatus('check-face', faceVerified ? 'ok' : 'pending', faceVerified ? 'Verified' : 'Pending');
+        }
+
+        function readinessSatisfied() {
+            return !!(streamRef && video.videoWidth && navigator.onLine && document.fullscreenElement && faceVerified);
+        }
+
+        function enableFullscreen() {
+            const root = document.documentElement;
+            if (!document.fullscreenElement && root.requestFullscreen) {
+                return root.requestFullscreen().catch(() => {
+                    showToast('Fullscreen required', 'Enable fullscreen mode before starting the secure exam.', 'warn');
+                });
+            }
+            updateFullscreenStatus();
+            return Promise.resolve();
+        }
+
+        function showToast(title, message, tone = 'info', sticky = false) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${tone}`;
+            toast.innerHTML = `<strong>${esc(title)}</strong><p>${esc(message)}</p>`;
+            toastStack.prepend(toast);
+            if (!sticky) {
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(16px)';
+                    setTimeout(() => toast.remove(), 220);
+                }, 3200);
+            }
+            return toast;
+        }
+
+        function addLog(msg) {
+            const item = document.createElement('div');
+            item.className = 'alert-item';
+            item.innerText = `${new Date().toLocaleTimeString()}: ${msg}`;
+            log.prepend(item);
+        }
+
+        function flashAlert(msg) {
+            showToast('Proctoring alert', msg, 'danger');
+        }
+
+        function startAudio() {
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function renderProgressRail() {
+            const items = [];
+            let questionNumber = 1;
+            examPayload.sections.forEach(section => section.questions.forEach(question => {
+                const state = questionState[question.id] || { answered: false, flagged: false };
+                items.push(`
+                    <button type="button" class="progress-pill ${state.answered ? 'answered' : ''} ${state.flagged ? 'flagged' : ''} ${activeQuestionId === question.id ? 'active' : ''}" onclick="jumpToQuestion('${question.id}')">${questionNumber}</button>
+                `);
+                questionNumber += 1;
+            }));
+            progressGrid.innerHTML = items.join('');
+            answeredCount.textContent = Object.values(questionState).filter(item => item.answered).length;
+            flaggedCount.textContent = Object.values(questionState).filter(item => item.flagged).length;
+        }
+
+        function renderSectionNav() {
+            sectionNavLinks.innerHTML = examPayload.sections.map((section, index) => `
+                <button type="button" class="rail-section-link" onclick="jumpToSection('${section.id}')">
+                    ${esc(section.title)}${index < examPayload.sections.length - 1 ? ` (${section.questions.length})` : ` (${section.questions.length})`}
+                </button>
+            `).join('');
+        }
+
+        function updateQuestionVisual(questionId) {
+            const state = questionState[questionId] || { answered: false, flagged: false };
+            const card = document.getElementById(`card-${questionId}`);
+            if (!card) return;
+            card.classList.toggle('answered', !!state.answered);
+            card.classList.toggle('flagged', !!state.flagged);
+            card.classList.toggle('active', activeQuestionId === questionId);
+            const flagButton = card.querySelector('.flag-btn');
+            if (flagButton) {
+                flagButton.classList.toggle('active', !!state.flagged);
+                flagButton.textContent = state.flagged ? 'Flagged For Review' : 'Flag For Review';
+            }
+        }
+
+        function updateAllQuestionVisuals() {
+            Object.keys(questionState).forEach(updateQuestionVisual);
+            renderProgressRail();
+        }
+
+        function collectAnswers() {
+            const answers = {};
+            examPayload.sections.forEach(section => section.questions.forEach(question => {
+                if (question.type === 'fill_blank') {
+                    answers[question.id] = (document.getElementById(question.id)?.value || '').trim();
+                } else {
+                    answers[question.id] = document.querySelector(`input[name="${question.id}"]:checked`)?.value || '';
+                }
+            }));
+            return answers;
+        }
+
+        function syncQuestionStateFromDom() {
+            const answers = collectAnswers();
+            Object.keys(questionState).forEach(questionId => {
+                const value = answers[questionId] || '';
+                questionState[questionId] = {
+                    ...questionState[questionId],
+                    value,
+                    answered: !!String(value).trim()
+                };
+            });
+            updateAllQuestionVisuals();
+        }
+
+        function jumpToQuestion(questionId) {
+            activeQuestionId = questionId;
+            updateAllQuestionVisuals();
+            const card = document.getElementById(`card-${questionId}`);
+            if (!card) return;
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            card.classList.remove('section-focus');
+            setTimeout(() => card.classList.add('section-focus'), 0);
+        }
+
+        function jumpToSection(sectionId) {
+            const section = document.getElementById(`section-${sectionId}`);
+            if (!section) return;
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            section.classList.remove('section-focus');
+            setTimeout(() => section.classList.add('section-focus'), 0);
+        }
+
+        function navigateSection(direction, currentSectionId) {
+            const index = examPayload.sections.findIndex(section => section.id === currentSectionId);
+            if (index === -1) return;
+            const next = examPayload.sections[index + direction];
+            if (next) jumpToSection(next.id);
+        }
+
+        function toggleFlag(questionId) {
+            questionState[questionId] = {
+                ...questionState[questionId],
+                flagged: !questionState[questionId]?.flagged
+            };
+            updateQuestionVisual(questionId);
+            renderProgressRail();
+            persistExamState();
+        }
+
+        function renderExam() {
+            let questionNumber = 1;
+            const html = examPayload.sections.map((section, sectionIndex) => {
+                const navButtons = [];
+                if (sectionIndex > 0) navButtons.push(`<button type="button" class="secondary nav-mini" onclick="navigateSection(-1, '${section.id}')">Previous Section</button>`);
+                if (sectionIndex < examPayload.sections.length - 1) navButtons.push(`<button type="button" class="secondary nav-mini" onclick="navigateSection(1, '${section.id}')">Next Section</button>`);
+                const questions = section.questions.map(question => {
+                    const number = questionNumber++;
+                    return `
+                        <div class="question-card" id="card-${question.id}" data-question-id="${question.id}">
+                            <div class="qmeta"><span>Question ${number}</span><span>${question.marks} mark(s)</span></div>
+                            <h3>${esc(question.question)}</h3>
+                            ${question.type === 'fill_blank'
+                                ? `<input type="text" id="${question.id}" placeholder="Type a single-word answer" oninput="handleAnswerChange('${question.id}')">`
+                                : question.options.map(option => `<label class="opt"><input type="radio" name="${question.id}" value="${esc(option)}" onchange="handleAnswerChange('${question.id}')"> ${esc(option)}</label>`).join('')}
+                            <div class="question-tools">
+                                <button type="button" class="secondary flag-btn" onclick="toggleFlag('${question.id}')">Flag For Review</button>
+                                <div class="muted">Use the progress rail to jump between questions and flagged items.</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <section class="section-card" id="section-${section.id}" style="animation-delay:${sectionIndex * 80}ms;">
+                        <div class="section-head">
+                            <div>
+                                <h2>${esc(section.title)}</h2>
+                                <p class="section-copy">${section.marks_per_question} mark(s) each. Use the navigator and flags to review before submission.</p>
+                            </div>
+                            <div class="section-actions">${navButtons.join('')}</div>
+                        </div>
+                        <div class="question-stack">${questions}</div>
+                    </section>
+                `;
+            }).join('');
+            document.getElementById('questions-container').innerHTML = html;
+            attachQuestionFocusTracking();
+            renderSectionNav();
+            updateAllQuestionVisuals();
+        }
+
+        function attachQuestionFocusTracking() {
+            document.querySelectorAll('.question-card input').forEach(input => {
+                input.addEventListener('focus', event => {
+                    const card = event.target.closest('.question-card');
+                    if (!card) return;
+                    activeQuestionId = card.dataset.questionId || '';
+                    updateAllQuestionVisuals();
+                });
+            });
+        }
+
+        function handleAnswerChange(questionId) {
+            syncQuestionStateFromDom();
+            activeQuestionId = questionId;
+            updateAllQuestionVisuals();
+            persistExamState();
+        }
+
+        function updateTimerRing() {
+            const ratio = Math.max(0, Math.min(1, timeLeft / totalDurationSeconds));
+            timerProgress.style.strokeDashoffset = ringCircumference - (ratio * ringCircumference);
+            timerProgress.style.stroke = ratio > 0.35 ? 'var(--gold)' : ratio > 0.15 ? 'var(--danger)' : '#ff305b';
+            timerNote.textContent = ratio > 0.35 ? 'Secure timer is running.' : ratio > 0.15 ? 'Time is running low.' : 'Final countdown in progress.';
+        }
+
+        function updateTrustMeter(score = 0, level = 'Low') {
+            currentRiskScore = Number(score || 0);
+            currentRiskLabel = level || 'Low';
+            const capped = Math.max(0, Math.min(100, currentRiskScore));
+            trustScoreValue.textContent = capped;
+            trustBadge.style.background = `conic-gradient(${level === 'High' ? 'var(--danger)' : level === 'Medium' ? 'var(--gold)' : 'var(--teal)'} ${capped / 100}turn, rgba(255,255,255,.06) 0turn)`;
+            trustLabel.textContent = `${currentRiskLabel} Risk`;
+            if (currentRiskLabel === 'High') {
+                trustDescription.textContent = 'Multiple or repeated violations are now pushing this attempt into a high-risk band. A clean recovery is needed immediately.';
+            } else if (currentRiskLabel === 'Medium') {
+                trustDescription.textContent = 'Some suspicious signals were detected. Stay centered, quiet, and in fullscreen to avoid escalation.';
+            } else {
+                trustDescription.textContent = 'No major proctoring concerns so far. Maintain a stable frame, active mic, and fullscreen focus.';
+            }
+        }
+
+        function updateViolationScore(score, threshold = 20) {
+            localViolationScore = score;
+            violationScoreValue.innerText = `${score} / ${threshold}`;
+            violationScoreNote.innerText = score > threshold ? 'Violation threshold crossed. Auto-submitting exam.' : 'Updated live after each violation.';
+            let level = 'Low';
+            if (score >= 12) level = 'High';
+            else if (score >= 5) level = 'Medium';
+            updateTrustMeter(score * 4, level);
+        }
+
+        function persistExamState() {
+            if (examSubmitted) return;
+            const payload = {
+                saved_at: new Date().toISOString(),
+                answers: collectAnswers(),
+                flags: Object.fromEntries(Object.entries(questionState).map(([key, value]) => [key, !!value.flagged])),
+                time_left: timeLeft,
+                face_verified: faceVerified,
+                face_match_score: faceMatchScore,
+                violation_count: localViolationCount,
+                violation_score_total: localViolationScore,
+                risk_score: currentRiskScore,
+                risk_level: currentRiskLabel
+            };
+            localStorage.setItem(storageKey, JSON.stringify(payload));
+            restoreSummary.textContent = `Saved locally at ${new Date(payload.saved_at).toLocaleTimeString()} with ${Object.values(payload.answers).filter(value => String(value || '').trim()).length} answered question(s).`;
+            if (hasSavedAttempt()) {
+                resumeBtn.style.display = 'inline-flex';
+                document.getElementById('resume-copy').textContent = 'A saved attempt was detected. You can resume the local answer state after media and verification checks.';
+            }
+        }
+
+        function clearPersistedExamState() {
+            localStorage.removeItem(storageKey);
+            restoreSummary.textContent = 'No saved answers detected yet.';
+            resumeBtn.style.display = 'none';
+            document.getElementById('resume-copy').textContent = 'If the page refreshes accidentally, your local answers and timer can be restored when the active attempt is still open.';
+        }
+
+        function restoreFromSavedState(saved) {
+            if (!saved) return;
+            const answers = saved.answers || {};
+            const flags = saved.flags || {};
+            Object.keys(questionState).forEach(questionId => {
+                const question = document.getElementById(questionId);
+                if (question) {
+                    question.value = answers[questionId] || '';
+                }
+                document.querySelectorAll(`input[name="${questionId}"]`).forEach(input => {
+                    input.checked = input.value === (answers[questionId] || '');
+                });
+                questionState[questionId] = {
+                    ...questionState[questionId],
+                    value: answers[questionId] || '',
+                    answered: !!String(answers[questionId] || '').trim(),
+                    flagged: !!flags[questionId]
+                };
+            });
+            timeLeft = Math.min(totalDurationSeconds, Math.max(0, Number(saved.time_left || totalDurationSeconds)));
+            localViolationCount = Number(saved.violation_count || 0);
+            updateViolationScore(Number(saved.violation_score_total || 0), 20);
+            updateTrustMeter(Number(saved.risk_score || 0), saved.risk_level || 'Low');
+            faceVerified = !!saved.face_verified;
+            faceMatchScore = Number(saved.face_match_score || 0);
+            updateMediaChecklist();
+            updateTimerRing();
+            syncQuestionStateFromDom();
+            addLog('Saved attempt data restored after reconnect.');
+            showToast('Attempt restored', 'Your local answers and timer were restored after reconnect.', 'info');
+        }
+
+        function resumeSavedAttempt() {
+            const saved = safeParseStorage();
+            if (!saved) {
+                showToast('Nothing to resume', 'No saved local exam state was found for this attempt.', 'warn');
+                return;
+            }
+            if (!streamRef) {
+                showToast('Media needed first', 'Enable camera and microphone before restoring the attempt view.', 'warn');
+                return;
+            }
+            isResuming = true;
+            showToast('Resume armed', 'Finish face verification to restore the saved attempt state.', 'info');
+        }
+
+        function initSavedAttemptHint() {
+            if (hasSavedAttempt()) {
+                resumeBtn.style.display = 'inline-flex';
+                const saved = safeParseStorage();
+                restoreSummary.textContent = `Saved local state found from ${new Date(saved.saved_at).toLocaleTimeString()}.`;
+                document.getElementById('resume-copy').textContent = 'A saved attempt was detected. You can resume the local answer state after media and verification checks.';
+            }
+            if (resumeState.active && resumeState.remaining_seconds > 0) {
+                document.getElementById('resume-copy').textContent = 'The server also sees an active attempt. Resume support is ready if the local answer state exists.';
+            }
+        }
+
+        function resetAttemptUI() {
+            localViolationCount = Number(resumeState.violation_count || 0);
+            localViolationScore = Number(resumeState.violation_score_total || 0);
+            autoSubmitTriggered = false;
+            autoSubmittedByViolations = false;
+            afkReported = false;
+            lastActivityAt = Date.now();
+            updateViolationScore(localViolationScore, 20);
+            updateTrustMeter(Number(resumeState.risk_score || 0), resumeState.risk_level || 'Low');
+            if (log) log.innerHTML = '';
+            examStateCopy.textContent = 'Monitoring is armed. Stay in fullscreen and keep your face visible.';
+        }
+
+        function markActivity() {
+            lastActivityAt = Date.now();
+            afkReported = false;
+        }
+
+        function confirmSubmit() {
+            if (!examSubmitted && !submitting) document.getElementById('submit-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('submit-modal').style.display = 'none';
+        }
+
+        function triggerAutoSubmit(threshold) {
+            if (autoSubmitTriggered || examSubmitted || submitting) return;
+            autoSubmitTriggered = true;
+            autoSubmittedByViolations = true;
+            violationScoreNote.innerText = `Violation score crossed ${threshold}. Auto-submitting exam now.`;
+            closeModal();
+            setTimeout(() => finalProcess({ forced: true }), 0);
+        }
+
+        async function finalProcess(options = {}) {
+            if (examSubmitted || submitting) return;
+            submitting = true;
+            document.getElementById('confirm-submit-btn').innerText = options.forced ? 'Auto Submitting...' : 'Submitting...';
+            try {
+                const res = await fetch('/submit_exam', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ year_group: yearGroup, answers: collectAnswers() })
+                });
+                const data = await res.json();
+                if (!res.ok || data.status !== 'success') throw new Error(data.message || 'Submission failed');
+                examSubmitted = true;
+                clearPersistedExamState();
+                closeModal();
+                showResult(data.result);
+            } catch (err) {
+                showToast('Submission failed', `Could not submit the exam: ${err.message}`, 'danger');
+            } finally {
+                submitting = false;
+                document.getElementById('confirm-submit-btn').innerText = 'Yes, Submit';
+            }
+        }
+
+        function showResult(result) {
+            const sectionResults = Array.isArray(result.section_results) ? result.section_results : [];
+            const totalScore = Number.isFinite(Number(result.total_score)) ? Number(result.total_score) : 0;
+            const totalMarks = Number.isFinite(Number(result.total_marks)) ? Number(result.total_marks) : 0;
+            const riskScore = Number.isFinite(Number(result.risk_score)) ? Number(result.risk_score) : 0;
+            const riskLevel = result.risk_level || 'Low';
+            const resultScreen = document.getElementById('result-screen');
+            resultScreen.style.display = 'flex';
+            document.getElementById('result-title').innerText = autoSubmittedByViolations ? 'Exam Auto-Submitted' : 'Assessment Submitted';
+            document.getElementById('final-score').innerText = totalScore;
+            document.getElementById('score-total').innerText = `/ ${totalMarks}`;
+            document.getElementById('section-summary').innerHTML = sectionResults.length
+                ? sectionResults.map(section => `<div class="summary-chip"><strong>${esc(section.title)}</strong><div class="muted">${section.score} / ${section.total}</div></div>`).join('')
+                : `<div class="summary-chip"><strong>No section data returned</strong><div class="muted">The submission completed, but the detailed section analysis was not available.</div></div>`;
+            document.getElementById('result-risk-copy').innerText = `${autoSubmittedByViolations ? 'The exam was auto-submitted because the violation score crossed the allowed threshold. ' : ''}Cheating risk score: ${riskScore} (${riskLevel}). Section-wise performance and question analysis are shown below.`;
+            document.getElementById('suggestion-summary').innerHTML = sectionResults.filter(section => section.total && ((section.score / section.total) * 100) < 65).map(section => `<div class="summary-chip"><strong>${esc(section.title)}</strong><div class="muted">Recommended practice: revise this section and solve more targeted questions.</div></div>`).join('');
+            document.getElementById('analysis-container').innerHTML = sectionResults.length
+                ? sectionResults.map(section => `<div class="review"><h2>${esc(section.title)}</h2><p class="muted">${section.score} / ${section.total}</p>${(section.questions || []).map(question => `<div class="review-item"><div style="display:flex;justify-content:space-between;gap:12px"><strong>Q${question.number}. ${esc(question.question)}</strong><span class="badge ${question.is_correct ? 'ok' : 'bad'}">${question.is_correct ? 'Correct' : 'Review'}</span></div><p class="muted"><strong>Your Answer:</strong> ${esc(question.user_answer)}</p><p class="muted"><strong>Correct Answer:</strong> ${esc(question.correct_answer)}</p><p class="muted"><strong>Explanation:</strong> ${esc(question.explanation)}</p><p class="muted"><strong>Marks:</strong> ${question.marks_awarded} / ${question.marks_possible}</p></div>`).join('')}</div>`).join('')
+                : `<div class="review"><h2>Analysis unavailable</h2><p class="muted">No detailed section analysis was returned for this submission.</p></div>`;
+            document.getElementById('main-wrapper').style.display = 'none';
+            document.getElementById('sidebar').style.display = 'none';
+            window.scrollTo(0, 0);
+        }
+
+        function updateMicStatus(value) {
+            micStatusCopy.textContent = value;
+        }
+
+        async function initMedia() {
+            faceStatus.innerText = 'Requesting camera and microphone access...';
+            scanStage.classList.remove('success', 'error');
+            try {
+                streamRef = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                video.srcObject = streamRef;
+                await video.play().catch(() => {});
+                faceStatus.innerText = 'Camera and microphone enabled. Please verify your face to enter.';
+                updateMicStatus('Microphone live and ready for environment checks.');
+                updateMediaChecklist();
+            } catch (error) {
+                faceStatus.innerText = 'Camera and microphone access are required to start this exam.';
+                updateMicStatus('Microphone access denied or unavailable.');
+                setChecklistStatus('check-camera', 'error', 'Blocked');
+                setChecklistStatus('check-mic', 'error', 'Blocked');
+                showToast('Permissions required', 'Camera and microphone access are required to start this exam.', 'danger');
+            }
+        }
+
+        async function waitForCameraFrame(timeoutMs = 2500) {
+            const start = Date.now();
+            while (Date.now() - start < timeoutMs) {
+                const image = getEvidenceFrame();
+                if (image) return image;
+                await new Promise(resolve => setTimeout(resolve, 150));
+            }
+            return '';
+        }
+
+        async function verifyFaceAndStart() {
+            if (verifyFaceBtn.disabled) return;
+            verifyFaceBtn.disabled = true;
+            enableMediaBtn.disabled = true;
+            fullscreenBtn.disabled = true;
+            verifyFaceBtn.innerText = 'Verifying...';
+            scanStage.classList.remove('success', 'error');
+            scanStage.classList.add('scanning');
+            faceStatus.innerText = 'Preparing live camera frame for verification...';
+            try {
+                if (!streamRef) {
+                    await initMedia();
+                    if (!streamRef) return;
+                }
+                if (!document.fullscreenElement) {
+                    await enableFullscreen();
+                }
+                const image = await waitForCameraFrame();
+                if (!image) {
+                    faceStatus.innerText = 'Camera preview is not ready yet. Please wait a moment and try again.';
+                    scanStage.classList.remove('scanning');
+                    scanStage.classList.add('error');
+                    showToast('Camera warming up', 'Waiting for camera frame. Please try again.', 'warn');
+                    return;
+                }
+                faceStatus.innerText = 'Verifying your face. Please look at the camera...';
+                const res = await fetch('/verify_face', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image })
+                });
+                const raw = await res.text();
+                let data = {};
+                try {
+                    data = raw ? JSON.parse(raw) : {};
+                } catch (parseError) {
+                    throw new Error('The server returned an invalid verification response.');
+                }
+                if (!res.ok || data.status !== 'success') {
+                    const message = data.message || 'Face verification failed.';
+                    faceStatus.innerText = message;
+                    scanStage.classList.remove('scanning');
+                    scanStage.classList.add('error');
+                    showToast('Verification failed', message, 'danger');
+                    return;
+                }
+                faceVerified = !!data.passed;
+                faceMatchScore = data.score || 0;
+                faceStatus.innerText = faceVerified ? `Face verified. Match score ${faceMatchScore}.` : `Verification failed. Match score ${faceMatchScore}, threshold ${data.threshold}.`;
+                updateMediaChecklist();
+                scanStage.classList.remove('scanning');
+                scanStage.classList.add(faceVerified ? 'success' : 'error');
+                if (!faceVerified) {
+                    showToast('Face not matched', `Match score ${faceMatchScore}, threshold ${data.threshold}.`, 'warn');
+                    return;
+                }
+                if (!readinessSatisfied()) {
+                    showToast('Final check pending', 'Fullscreen and online status must still be active before the exam can open.', 'warn');
+                    return;
+                }
+                startExamExperience();
+            } catch (err) {
+                const message = err?.message || 'Unable to verify face right now. Please try again.';
+                faceStatus.innerText = message;
+                scanStage.classList.remove('scanning');
+                scanStage.classList.add('error');
+                showToast('Verification error', message, 'danger');
+            } finally {
+                verifyFaceBtn.disabled = false;
+                enableMediaBtn.disabled = false;
+                fullscreenBtn.disabled = false;
+                verifyFaceBtn.innerText = 'Verify Face And Start';
+            }
+        }
+
+        function getEvidenceFrame() {
+            if (video.videoWidth) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 320;
+                canvas.height = 240;
+                canvas.getContext('2d').drawImage(video, 0, 0, 320, 240);
+                latestEvidenceFrame = canvas.toDataURL('image/jpeg', 0.6);
+            }
+            return latestEvidenceFrame;
+        }
+
+        function setupAudio(stream) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioCtx.createMediaStreamSource(stream);
+            const analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 256;
+            source.connect(analyser);
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            (function loop() {
+                analyser.getByteFrequencyData(dataArray);
+                const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+                audioBar.style.width = `${Math.min(100, avg * 3.5)}%`;
+                updateMicStatus(avg > 35 ? 'Environment noise is rising. Keep the room quiet.' : 'Microphone is active and within normal range.');
+                if (avg > 35 && !examSubmitted && Date.now() - lastAudioEmitAt > 4000) {
+                    lastAudioEmitAt = Date.now();
+                    socket.emit('audio_violation', { student_info: studentInfo, evidence_image: getEvidenceFrame() });
+                }
+                requestAnimationFrame(loop);
+            })();
+        }
+
+        function startAI() {
+            if (aiInterval) return;
+            aiInterval = setInterval(() => {
+                if (!video.videoWidth || examSubmitted) return;
+                const image = getEvidenceFrame();
+                if (!image) return;
+                socket.emit('video_frame', { image, student_info: studentInfo });
+            }, 1200);
+        }
+
+        function startLiveStatus() {
+            if (liveStatusInterval) return;
+            liveStatusInterval = setInterval(() => {
+                if (examSubmitted) return;
+                socket.emit('exam_status', {
+                    student_id: studentId,
+                    student_name: studentName,
+                    year_group: yearGroup,
+                    remaining_seconds: timeLeft,
+                    frame: getEvidenceFrame(),
+                    mic_status: (parseFloat(audioBar.style.width) || 0) > 65 ? 'active' : 'normal',
+                    face_verified: faceVerified,
+                    face_match_score: faceMatchScore,
+                    violation_count: localViolationCount,
+                    violation_score_total: localViolationScore
+                });
+            }, 3000);
+        }
+
+        function startPersistLoop() {
+            if (persistInterval) return;
+            persistInterval = setInterval(persistExamState, 5000);
+        }
+
+        function startTimer() {
+            if (timerStarted) return;
+            timerStarted = true;
+            updateTimerRing();
+            timerInterval = setInterval(() => {
+                const m = Math.floor(timeLeft / 60);
+                const s = timeLeft % 60;
+                timerDisplay.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+                updateTimerRing();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    finalProcess();
+                    return;
+                }
+                timeLeft -= 1;
+            }, 1000);
+        }
+
+        function startExamExperience() {
+            resetAttemptUI();
+            document.getElementById('permission-shield').style.display = 'none';
+            document.getElementById('sidebar').style.display = 'flex';
+            document.getElementById('main-wrapper').style.display = 'flex';
+            setupAudio(streamRef);
+            renderExam();
+            if (isResuming) {
+                const saved = safeParseStorage();
+                if (saved) restoreFromSavedState(saved);
+                isResuming = false;
+            } else if (resumeState.active && resumeState.remaining_seconds > 0) {
+                timeLeft = Number(resumeState.remaining_seconds || totalDurationSeconds);
+                updateViolationScore(Number(resumeState.violation_score_total || 0), 20);
+                updateTrustMeter(Number(resumeState.risk_score || 0), resumeState.risk_level || 'Low');
+            }
+            startAI();
+            startLiveStatus();
+            startPersistLoop();
+            startTimer();
+            updateMediaChecklist();
+            examStateCopy.textContent = 'Exam live. All monitoring, answer saving, and reconnect support are active.';
+            showToast('Exam started', 'Mission control is live. Your answers will now save locally for reconnect recovery.', 'info');
+        }
+
+        window.onblur = () => {
+            if (timerStarted && !examSubmitted) socket.emit('tab_switch', { student_info: studentInfo, msg: 'Tab Switch / Window Minimized', evidence_image: getEvidenceFrame() });
+        };
+
+        ['mousemove', 'keydown', 'click', 'touchstart', 'scroll'].forEach(evt => document.addEventListener(evt, markActivity, { passive: true }));
+        ['copy', 'paste', 'contextmenu'].forEach(evt => document.addEventListener(evt, e => {
+            e.preventDefault();
+            const reason = evt === 'contextmenu' ? 'Right Click' : evt.charAt(0).toUpperCase() + evt.slice(1);
+            addLog(`Restricted action: ${reason}`);
+            flashAlert(`Restricted action: ${reason}`);
+            socket.emit('tab_switch', { student_info: studentInfo, msg: `Restricted Action: ${reason}`, evidence_image: getEvidenceFrame() });
+        }));
+        document.onkeydown = e => {
+            if (e.ctrlKey && [67, 86, 85, 73, 83].includes(e.keyCode)) {
+                addLog('Restricted key combination');
+                flashAlert('Restricted key combination');
+                socket.emit('tab_switch', { student_info: studentInfo, msg: 'Restricted Keys', evidence_image: getEvidenceFrame() });
+                return false;
+            }
+        };
+
+        setInterval(() => {
+            if (!timerStarted || examSubmitted || afkReported) return;
+            if (Date.now() - lastActivityAt > 120000) {
+                afkReported = true;
+                socket.emit('tab_switch', { student_info: studentInfo, msg: 'Inactivity (AFK) > 2 Minutes', evidence_image: getEvidenceFrame() });
+            }
+        }, 15000);
+
+        socket.on('cheat_alert', data => (data.alerts || []).forEach(alert => {
+            const message = typeof alert === 'string' ? alert : alert.message;
+            const score = typeof alert === 'string' ? localViolationScore : Number(alert.total_score || localViolationScore);
+            const threshold = typeof alert === 'string' ? 20 : Number(alert.threshold || 20);
+            localViolationCount += 1;
+            addLog(`${message}${typeof alert === 'object' ? ` (+${alert.score})` : ''}`);
+            updateViolationScore(score, threshold);
+            if (typeof alert === 'object') {
+                updateTrustMeter(Number(alert.risk_score || 0), alert.risk_level || 'Low');
+            }
+            const lower = String(message).toLowerCase();
+            if (lower.includes('phone') || lower.includes('restricted') || lower.includes('loud noise') || lower.includes('multiple people')) flashAlert(message);
+            if (Number(localViolationScore) > Number(threshold)) {
+                triggerAutoSubmit(threshold);
+            }
+            persistExamState();
+        }));
+
+        socket.on('admin_announcement', payload => {
+            if (!payload || !payload.message) return;
+            if (payload.created_at && payload.created_at === lastAnnouncementAt) return;
+            lastAnnouncementAt = payload.created_at || '';
+            addLog(`Admin notice: ${payload.message}`);
+            showToast(payload.student_id ? 'Admin Warning' : 'Admin Announcement', payload.message, payload.student_id ? 'danger' : 'info');
+        });
+
+        function initFromResumeState() {
+            questionState = defaultQuestionState();
+            renderSectionNav();
+            updateNetworkStatus();
+            updateFullscreenStatus();
+            updateMediaChecklist();
+            timeLeft = resumeState.active && resumeState.remaining_seconds > 0 ? Number(resumeState.remaining_seconds) : totalDurationSeconds;
+            localViolationCount = Number(resumeState.violation_count || 0);
+            localViolationScore = Number(resumeState.violation_score_total || 0);
+            updateViolationScore(localViolationScore, 20);
+            updateTrustMeter(Number(resumeState.risk_score || 0), resumeState.risk_level || 'Low');
+            updateTimerRing();
+            initSavedAttemptHint();
+            if (resumeState.active && resumeState.remaining_seconds > 0) {
+                showToast('Active attempt detected', 'The server still sees an active exam session. Use resume support if your page was refreshed.', 'info');
+            }
+        }
+
+        window.addEventListener('online', updateNetworkStatus);
+        window.addEventListener('offline', updateNetworkStatus);
+        document.addEventListener('fullscreenchange', updateFullscreenStatus);
+        window.addEventListener('beforeunload', () => {
+            if (!examSubmitted) persistExamState();
+        });
+        window.addEventListener('pageshow', () => {
+            updateNetworkStatus();
+            updateFullscreenStatus();
+        });
+
+        initFromResumeState();
+    </script>
+    <script>
+        (function () {
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const enterPage = () => {
+                document.body.classList.add('page-ready');
+                document.body.classList.remove('page-exit');
+            };
+            window.transitionTo = function (url) {
+                if (!url) return;
+                if (reduceMotion) { window.location.href = url; return; }
+                document.body.classList.remove('page-ready');
+                document.body.classList.add('page-exit');
+                setTimeout(() => { window.location.href = url; }, 220);
+            };
+            document.addEventListener('click', (event) => {
+                const link = event.target.closest('a[href]');
+                if (!link) return;
+                const href = link.getAttribute('href') || '';
+                if (!href || href.startsWith('#') || link.target === '_blank' || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                const absoluteUrl = new URL(link.href, window.location.href);
+                if (absoluteUrl.origin !== window.location.origin) return;
+                event.preventDefault();
+                transitionTo(absoluteUrl.href);
+            });
+            window.addEventListener('pageshow', enterPage);
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', enterPage);
+            else enterPage();
+        })();
+    </script>
+</body>
+</html>

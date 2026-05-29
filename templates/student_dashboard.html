@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Portal | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='tilt-effects.css') }}">
+    <script src="{{ url_for('static', filename='tilt-effects.js') }}" defer></script>
+    <style>
+        :root { --primary: #23a6d5; --sidebar: #1e1e2f; --bg: #f4f7f6; --danger: #e73c7e; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); display: flex; min-height: 100vh; }
+
+        #side-nav { width: 280px; background: var(--sidebar); color: white; padding: 30px 20px; position: fixed; height: 100vh; display: flex; flex-direction: column; }
+        .nav-link { padding: 15px; color: #aaa; text-decoration: none; border-radius: 10px; margin-bottom: 10px; display: block; font-weight: 400; }
+        .nav-link.active { background: rgba(255,255,255,0.1); color: white; }
+
+        #content { margin-left: 280px; flex: 1; padding: 40px; }
+        .panel { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+
+        .exam-card { border: 1px solid #f0f0f0; padding: 25px; border-radius: 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+        .locked { opacity: 0.5; filter: grayscale(1); background: #fafafa; cursor: not-allowed; }
+        .unlocked:hover { border-color: var(--primary); box-shadow: 0 5px 15px rgba(35, 166, 213, 0.1); }
+
+        .btn-start { background: var(--primary); color: white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: 600; box-shadow: 0 4px 15px rgba(35, 166, 213, 0.2); }
+        .lock-badge { background: #eee; padding: 8px 15px; border-radius: 50px; font-size: 0.8rem; color: #888; }
+    </style>
+</head>
+<body>
+    <div id="side-nav">
+        <div style="font-size:1.5rem; font-weight:600; margin-bottom:40px;">🛡️ Student Portal</div>
+        <a class="nav-link active">My Assessments</a>
+        <a href="/logout" style="margin-top:auto; color:var(--danger); text-decoration:none; padding:15px;">Logout</a>
+    </div>
+
+    <div id="content">
+        <h1>Welcome, {{ session['name'] }}</h1>
+        <p style="color: #888; margin-bottom: 30px;">Semester Group: {{ current_sem }}</p>
+
+        <div class="panel">
+            {% for g in range(1, 5) %}
+            <div class="exam-card {% if g == group_id %}unlocked{% else %}locked{% endif %}">
+                <div>
+                    <h3 style="color: #333;">Year {{ g }} Final Assessment</h3>
+                    <p style="font-size: 0.85rem; color: #777;">Semester Coverage: {{ (g*2)-1 }} & {{ g*2 }} | 30 Questions | 50 Marks</p>
+                    <p style="font-size: 0.8rem; color: #999; margin-top: 6px;">Pattern: 10 MCQs, 10 True/False, 10 Fill in the Blanks</p>
+                </div>
+                
+                {% if g == group_id %}
+                <a href="/exam/{{ g }}" class="btn-start">Start Now</a>
+                {% else %}
+                <div class="lock-badge">🔒 Locked</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

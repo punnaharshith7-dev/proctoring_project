@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | Secure Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='tilt-effects.css') }}">
+    <script src="{{ url_for('static', filename='tilt-effects.js') }}" defer></script>
+    <style>
+        :root {
+            --primary: #23a6d5;
+            --secondary: #23d5ab;
+            --danger: #e73c7e;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        /* --- Shifting Gradient Animation --- */
+        body {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .reg-card {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        h2 { color: #333; margin-bottom: 25px; font-weight: 600; }
+
+        input[type="text"], input[type="password"], select {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border: 1px solid #edf2f7;
+            border-radius: 12px;
+            background: #f8faff;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(35, 166, 213, 0.1); }
+
+        /* --- MGIT Branch Checkboxes --- */
+        .branch-section {
+            text-align: left;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8faff;
+            border-radius: 12px;
+            border: 1px solid #edf2f7;
+        }
+        
+        .branch-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .branch-grid label {
+            font-size: 0.85rem;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        /* --- Strength Meter --- */
+        .meter-container { height: 6px; background: #eee; border-radius: 3px; margin: 5px 0 10px 0; overflow: hidden; }
+        #strength-bar { height: 100%; width: 0%; transition: 0.3s; background: var(--danger); }
+        .suggest-link { font-size: 0.8rem; color: var(--primary); cursor: pointer; display: block; text-align: right; margin-bottom: 10px; }
+
+        .btn-reg {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(35, 166, 213, 0.2);
+            margin-top: 20px;
+        }
+
+        .login-link { margin-top: 20px; font-size: 0.85rem; color: #666; }
+        .login-link a { color: var(--primary); text-decoration: none; font-weight: 600; }
+        .photo-section {
+            text-align: left;
+            margin-top: 12px;
+        }
+        .photo-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .photo-btn {
+            border: none;
+            border-radius: 12px;
+            padding: 11px 14px;
+            cursor: pointer;
+            font-weight: 600;
+            background: #eef7ff;
+            color: #1677b3;
+        }
+        .photo-name {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 8px;
+            min-height: 18px;
+        }
+        .photo-preview {
+            display: none;
+            width: 120px;
+            height: 120px;
+            border-radius: 18px;
+            object-fit: cover;
+            margin-top: 12px;
+            border: 1px solid #edf2f7;
+        }
+        #camera-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(12, 18, 28, 0.72);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+        .camera-card {
+            width: min(460px, 100%);
+            background: white;
+            border-radius: 24px;
+            padding: 22px;
+            text-align: center;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.24);
+        }
+        .camera-card h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .camera-card p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 14px;
+        }
+        #camera-stream {
+            width: 100%;
+            border-radius: 18px;
+            background: #0f1722;
+        }
+        .camera-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        @media (max-width: 640px) {
+            body { padding: 24px 14px; }
+            .reg-card { padding: 24px 18px; border-radius: 20px; }
+            .branch-grid { grid-template-columns: 1fr; }
+            .photo-actions, .camera-actions { flex-direction: column; align-items: stretch; }
+            .photo-btn { width: 100%; text-align: center; }
+            h2 { font-size: 1.55rem; margin-bottom: 20px; }
+        }
+        body.page-ready { opacity: 1; transform: translateY(0); }
+        body.page-exit { opacity: 0; transform: translateY(8px); }
+        body { transition: opacity 0.28s ease, transform 0.28s ease; }
+        @media (prefers-reduced-motion: reduce) {
+            body, body.page-ready, body.page-exit { transition: none; transform: none; opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="reg-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/2997/2997312.png" width="50" style="margin-bottom: 10px;">
+        <h2>Student Registration</h2>
+        
+        <form id="regForm" enctype="multipart/form-data">
+            <input type="text" name="name" placeholder="Full Name" required>
+            
+            <input type="text" name="userid" id="userid" maxlength="10" placeholder="Roll Number (10 Alphanumeric)" required>
+            
+            <div class="branch-section">
+                <p style="font-size: 0.9rem; font-weight: 600; color: #333;">Select Your Branch (MGIT):</p>
+                <div class="branch-grid">
+                    <label><input type="checkbox" class="branch-cb" name="branch" value="CSE"> CSE</label>
+                    <label><input type="checkbox" class="branch-cb" name="branch" value="CSE-AI&ML"> CSE (AI&ML)</label>
+                    <label><input type="checkbox" class="branch-cb" name="branch" value="CSE-DS"> CSE (DS)</label>
+                    <label><input type="checkbox" class="branch-cb" name="branch" value="IT"> IT</label>
+                    <label><input type="checkbox" class="branch-cb" name="branch" value="ECE"> ECE</label>
+                    <label><input type="checkbox" class="branch-cb" name="branch" value="EEE"> EEE</label>
+                    <label><input type="checkbox" class="branch-cb" name="branch" value="CIVIL"> CIVIL</label>
+                    <label><input type="checkbox" class="branch-cb" name="branch" value="MECH"> MECH</label>
+                    <label><input type="checkbox" class="branch-cb" name="branch" value="MCT"> MCT</label>
+                    <label><input type="checkbox" class="branch-cb" name="branch" value="MET"> MET</label>
+                </div>
+            </div>
+
+            <select name="semester" required>
+                <option value="" disabled selected>Current Semester</option>
+                <option value="1-1">1st Year - 1st Sem</option>
+                <option value="1-2">1st Year - 2nd Sem</option>
+                <option value="2-1">2nd Year - 1st Sem</option>
+                <option value="2-2">2nd Year - 2nd Sem</option>
+                <option value="3-1">3rd Year - 1st Sem</option>
+                <option value="3-2">3rd Year - 2nd Sem</option>
+                <option value="4-1">4th Year - 1st Sem</option>
+                <option value="4-2">4th Year - 2nd Sem</option>
+            </select>
+
+            <input type="text" name="phone" placeholder="Phone Number" required>
+            
+            <input type="password" id="password" name="password" placeholder="Create Unique Password" oninput="checkStrength(this.value)" required>
+            <div class="meter-container"><div id="strength-bar"></div></div>
+            <span class="suggest-link" onclick="suggestPassword()">Suggest strong password</span>
+            
+            <div class="photo-section">
+                <p style="font-size: 0.75rem; color: #888;">Profile Picture (Required):</p>
+                <div class="photo-actions">
+                    <input type="file" id="profile-pic-input" name="profile_pic" accept="image/*" hidden>
+                    <button type="button" class="photo-btn" onclick="document.getElementById('profile-pic-input').click()">Upload Photo</button>
+                    <button type="button" class="photo-btn" onclick="openCameraModal()">Take Photo</button>
+                </div>
+                <div id="photo-file-name" class="photo-name">A profile photo is required to create the account.</div>
+                <img id="photo-preview" class="photo-preview" alt="Selected profile preview">
+            </div>
+            
+            <button type="submit" class="btn-reg">CREATE ACCOUNT</button>
+        </form>
+
+        <div class="login-link">
+            Already registered? <a href="/login">Login here</a>
+        </div>
+    </div>
+
+    <div id="camera-modal">
+        <div class="camera-card">
+            <h3>Take Profile Photo</h3>
+            <p>Center your face clearly and capture a bright front-facing image.</p>
+            <video id="camera-stream" autoplay playsinline muted></video>
+            <canvas id="camera-canvas" style="display:none;"></canvas>
+            <div class="camera-actions">
+                <button type="button" class="photo-btn" onclick="capturePhoto()">Capture</button>
+                <button type="button" class="photo-btn" onclick="closeCameraModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cameraStream = null;
+        const profilePicInput = document.getElementById('profile-pic-input');
+        const photoPreview = document.getElementById('photo-preview');
+        const photoFileName = document.getElementById('photo-file-name');
+        const cameraModal = document.getElementById('camera-modal');
+        const cameraVideo = document.getElementById('camera-stream');
+        const cameraCanvas = document.getElementById('camera-canvas');
+
+        // --- LOGIC TO ALLOW ONLY 1 BRANCH ---
+        const checkboxes = document.querySelectorAll('.branch-cb');
+        checkboxes.forEach((cb) => {
+            cb.addEventListener('click', function() {
+                if (this.checked) {
+                    checkboxes.forEach((other) => {
+                        if (other !== this) other.checked = false;
+                    });
+                }
+            });
+        });
+
+        // Alphanumeric Roll Number Helper (Auto-Uppercase)
+        document.getElementById('userid').oninput = function() {
+            // Converts input to uppercase and removes non-alphanumeric chars
+            this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        };
+
+        function checkStrength(pwd) {
+            let strength = 0;
+            if (pwd.length >= 8) strength += 25;
+            if (/[A-Z]/.test(pwd)) strength += 25;
+            if (/[0-9]/.test(pwd)) strength += 25;
+            if (/[^A-Za-z0-9]/.test(pwd)) strength += 25;
+            
+            const bar = document.getElementById('strength-bar');
+            bar.style.width = strength + "%";
+            bar.style.background = strength < 50 ? "#e73c7e" : (strength < 100 ? "#f1c40f" : "#23d5ab");
+        }
+
+        function suggestPassword() {
+            const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+            let pass = "";
+            for (let i = 0; i < 12; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+            document.getElementById('password').value = pass;
+            checkStrength(pass);
+            alert("Strong Password Suggested: " + pass);
+        }
+
+        function updatePhotoPreview(file, label) {
+            if (!file) {
+                photoPreview.style.display = 'none';
+                photoPreview.removeAttribute('src');
+                photoFileName.innerText = 'No photo selected.';
+                return;
+            }
+
+            photoFileName.innerText = label || file.name;
+            const reader = new FileReader();
+            reader.onload = () => {
+                photoPreview.src = reader.result;
+                photoPreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        profilePicInput.addEventListener('change', () => {
+            const file = profilePicInput.files[0];
+            updatePhotoPreview(file);
+        });
+
+        async function openCameraModal() {
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                cameraVideo.srcObject = cameraStream;
+                cameraModal.style.display = 'flex';
+            } catch (err) {
+                alert('Camera access was denied or is not available on this device.');
+            }
+        }
+
+        function stopCameraStream() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            cameraVideo.srcObject = null;
+        }
+
+        function closeCameraModal() {
+            stopCameraStream();
+            cameraModal.style.display = 'none';
+        }
+
+        function capturePhoto() {
+            if (!cameraVideo.videoWidth) {
+                alert('Camera preview is not ready yet. Please wait a moment.');
+                return;
+            }
+
+            cameraCanvas.width = cameraVideo.videoWidth;
+            cameraCanvas.height = cameraVideo.videoHeight;
+            cameraCanvas.getContext('2d').drawImage(cameraVideo, 0, 0);
+            cameraCanvas.toBlob((blob) => {
+                if (!blob) {
+                    alert('Could not capture the photo. Please try again.');
+                    return;
+                }
+
+                const capturedFile = new File([blob], 'captured_profile.jpg', { type: 'image/jpeg' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(capturedFile);
+                profilePicInput.files = dataTransfer.files;
+                updatePhotoPreview(capturedFile, 'Captured from camera');
+                closeCameraModal();
+            }, 'image/jpeg', 0.92);
+        }
+
+        document.getElementById('regForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const requiredFields = [
+                ['name', 'Please enter Full Name.'],
+                ['userid', 'Please enter Roll Number.'],
+                ['semester', 'Please select Semester.'],
+                ['phone', 'Please enter Phone Number.'],
+                ['password', 'Please enter Password.']
+            ];
+
+            for (const [field, message] of requiredFields) {
+                if (!String(formData.get(field) || '').trim()) {
+                    alert(message);
+                    return;
+                }
+            }
+            
+            if (formData.getAll('branch').length === 0) {
+                alert("Please select a branch.");
+                return;
+            }
+
+            if (!profilePicInput.files || !profilePicInput.files.length) {
+                alert("Please upload or capture a profile photo.");
+                return;
+            }
+
+            const res = await fetch('/register_user', { method: 'POST', body: formData });
+            const data = await res.json();
+            alert(data.message);
+            if(data.status === 'success') transitionTo('/login');
+        };
+
+        window.addEventListener('beforeunload', stopCameraStream);
+    </script>
+    <script>
+        (function () {
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const enterPage = () => {
+                document.body.classList.add('page-ready');
+                document.body.classList.remove('page-exit');
+            };
+            window.transitionTo = function (url) {
+                if (!url) return;
+                if (reduceMotion) { window.location.href = url; return; }
+                document.body.classList.remove('page-ready');
+                document.body.classList.add('page-exit');
+                setTimeout(() => { window.location.href = url; }, 220);
+            };
+            document.addEventListener('click', (event) => {
+                const link = event.target.closest('a[href]');
+                if (!link) return;
+                const href = link.getAttribute('href') || '';
+                if (!href || href.startsWith('#') || link.target === '_blank' || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                const absoluteUrl = new URL(link.href, window.location.href);
+                if (absoluteUrl.origin !== window.location.origin) return;
+                event.preventDefault();
+                transitionTo(absoluteUrl.href);
+            });
+            window.addEventListener('pageshow', enterPage);
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', enterPage);
+            else enterPage();
+        })();
+    </script>
+</body>
+</html>

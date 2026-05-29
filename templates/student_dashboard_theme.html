@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='tilt-effects.css') }}">
+    <script src="{{ url_for('static', filename='tilt-effects.js') }}" defer></script>
+    <script>
+        const savedTheme = localStorage.getItem('portal-theme');
+        const preferredTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = savedTheme || preferredTheme;
+    </script>
+    <style>
+        :root {
+            --primary: #23a6d5;
+            --sidebar: #1e1e2f;
+            --bg: #f4f7f6;
+            --danger: #e73c7e;
+            --panel: #ffffff;
+            --text: #1f2a36;
+            --muted: #66768d;
+            --nav-muted: #aab2c2;
+            --card-border: #f0f0f0;
+            --locked-bg: #fafafa;
+            --lock-badge-bg: #eee;
+            --lock-badge-text: #888;
+            --input-bg: #f9fbff;
+            --input-border: #d9e3ef;
+            --overlay: rgba(14, 22, 34, 0.55);
+        }
+
+        html[data-theme='dark'] {
+            --sidebar: #0d182b;
+            --bg: #08131f;
+            --panel: #111e2d;
+            --text: #eef4ff;
+            --muted: #9eb0c6;
+            --nav-muted: #93a2b8;
+            --card-border: rgba(137, 160, 188, 0.18);
+            --locked-bg: rgba(255, 255, 255, 0.04);
+            --lock-badge-bg: rgba(255, 255, 255, 0.08);
+            --lock-badge-text: #c5d0df;
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --input-border: rgba(137, 160, 188, 0.22);
+            --overlay: rgba(3, 8, 15, 0.74);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        html, body { height: 100%; }
+        body { background: var(--bg); display: flex; min-height: 100vh; height: 100vh; color: var(--text); overflow: hidden; }
+
+        #side-nav { width: 280px; background: var(--sidebar); color: white; padding: 30px 20px; position: fixed; top: 0; left: 0; height: 100vh; display: flex; flex-direction: column; overflow-y: auto; }
+        .brand { font-size:1.5rem; font-weight:600; margin-bottom:24px; }
+        .nav-link { padding: 15px; color: var(--nav-muted); text-decoration: none; border-radius: 10px; margin-bottom: 10px; display: block; font-weight: 400; }
+        .nav-link.active { background: rgba(255,255,255,0.1); color: white; }
+        .side-bottom { margin-top:auto; display:flex; flex-direction:column; gap:12px; }
+        .profile-trigger, .theme-toggle { padding: 12px 14px; border: 1px solid rgba(255,255,255,0.14); border-radius: 16px; background: rgba(255,255,255,0.08); color: white; cursor: pointer; font-weight: 600; }
+        .profile-trigger { display:flex; align-items:center; gap:12px; text-align:left; }
+        .profile-trigger { text-decoration: none; }
+        .profile-avatar, .modal-avatar { width: 44px; height: 44px; border-radius: 50%; overflow:hidden; background: rgba(255,255,255,0.12); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .modal-avatar { width: 72px; height: 72px; font-size: 1.4rem; }
+        .profile-avatar img, .modal-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+        .avatar-fallback { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-weight:700; }
+        .profile-meta small { display:block; color: var(--nav-muted); font-weight:400; margin-top:2px; }
+        .logout-link { color:var(--danger); text-decoration:none; padding:15px; }
+
+        #content { margin-left: 280px; flex: 1; height: 100vh; overflow-y: auto; padding: 40px; }
+        .page-subtitle { color: var(--muted); margin-bottom: 30px; }
+        .panel { background: var(--panel); padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+
+        .exam-card { border: 1px solid var(--card-border); padding: 25px; border-radius: 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; background: transparent; }
+        .exam-info h3 { color: var(--text); }
+        .exam-meta, .exam-pattern { color: var(--muted); }
+        .exam-meta { font-size: 0.85rem; }
+        .exam-pattern { margin-top: 6px; font-size: 0.8rem; }
+        .locked { opacity: 0.6; background: var(--locked-bg); cursor: not-allowed; }
+        .unlocked:hover { border-color: var(--primary); box-shadow: 0 5px 15px rgba(35, 166, 213, 0.1); }
+
+        .btn-start { background: var(--primary); color: white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: 600; box-shadow: 0 4px 15px rgba(35, 166, 213, 0.2); }
+        .lock-badge { background: var(--lock-badge-bg); padding: 8px 15px; border-radius: 50px; font-size: 0.8rem; color: var(--lock-badge-text); }
+
+        .section-block { margin-top: 34px; }
+        .section-block h2 { margin-bottom: 8px; }
+        .section-copy { color: var(--muted); margin-bottom: 18px; line-height: 1.6; }
+        .stats-grid, .split-grid { display: grid; gap: 18px; }
+        .stats-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 18px; }
+        .split-grid { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+        .stat-tile { background: var(--panel); border-radius: 20px; padding: 20px; box-shadow: 0 10px 24px rgba(0,0,0,0.04); }
+        .stat-label { color: var(--muted); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+        .stat-value { font-size: 2rem; font-weight: 700; }
+        .stat-subtext { color: var(--muted); margin-top: 8px; font-size: 0.9rem; }
+        .trend-up { color: #18a07f; }
+        .trend-down { color: #cc4665; }
+        .leaderboard-table, .attempt-table { width: 100%; border-collapse: collapse; }
+        .leaderboard-table th, .leaderboard-table td, .attempt-table th, .attempt-table td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--card-border); }
+        .leaderboard-table th, .attempt-table th { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .rank-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 34px; border-radius: 999px; background: rgba(35, 166, 213, 0.14); color: var(--primary); font-weight: 700; }
+        .chart-shell { height: 280px; }
+        .chart-shell canvas { width: 100% !important; height: 100% !important; }
+        .topic-list { display: grid; gap: 12px; }
+        .topic-card { border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; background: transparent; }
+        .topic-meta { display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom: 8px; }
+        .topic-score { font-weight: 700; color: #cc4665; }
+        .achievement-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px; }
+        .achievement-card { border:1px solid var(--card-border); border-radius:18px; padding:18px; background:linear-gradient(180deg, rgba(35,166,213,0.08), transparent); }
+        .achievement-card strong { display:block; margin-bottom:8px; }
+        .recommendation-card { border-radius:20px; padding:20px; background:linear-gradient(135deg, rgba(35,166,213,0.12), rgba(231,60,126,0.08)); border:1px solid var(--card-border); }
+        .insight-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-top:18px; }
+        .insight-card { border:1px solid var(--card-border); border-radius:18px; padding:18px; background:transparent; }
+        .count-up { display:inline-block; }
+        .status-banner { background: var(--panel); border-radius: 20px; padding: 18px 20px; margin-bottom: 18px; box-shadow: 0 10px 24px rgba(0,0,0,0.04); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+        .pill { display:inline-flex; padding: 7px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+        .pill.low { background: rgba(24, 160, 127, 0.14); color: #18a07f; }
+        .pill.medium { background: rgba(244, 169, 0, 0.16); color: #c87d00; }
+        .pill.high { background: rgba(231, 60, 126, 0.14); color: #cc4665; }
+        .pill.pending { background: rgba(35, 166, 213, 0.14); color: var(--primary); }
+        .report-link { display:inline-flex; align-items:center; gap:8px; padding: 11px 14px; border-radius: 14px; background: rgba(35, 166, 213, 0.12); color: var(--primary); text-decoration:none; font-weight: 600; }
+        .empty-state { background: var(--panel); border-radius: 20px; padding: 22px; color: var(--muted); line-height: 1.6; }
+
+        #profile-modal { position: fixed; inset: 0; background: var(--overlay); display: none; align-items: center; justify-content: center; padding: 24px; z-index: 1000; }
+        #profile-modal.is-open { display: flex; }
+        .profile-modal-card { width: min(760px, 100%); background: var(--panel); border-radius: 24px; padding: 28px; box-shadow: 0 18px 42px rgba(0,0,0,0.16); }
+        .modal-head { display:flex; justify-content:space-between; gap:20px; align-items:flex-start; margin-bottom: 20px; }
+        .modal-head p { color: var(--muted); margin-top: 8px; line-height: 1.6; }
+        .modal-close { border:none; background:transparent; color: var(--muted); font-size: 1.6rem; cursor:pointer; }
+        .profile-summary { display:flex; gap:16px; align-items:center; margin-bottom: 22px; }
+        .summary-copy p { color: var(--muted); margin-top: 6px; }
+        .profile-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+        .field { display:flex; flex-direction:column; gap:8px; }
+        .field label { font-size: 0.9rem; font-weight: 600; }
+        .field input, .field select { width:100%; padding:13px 14px; border-radius: 14px; border:1px solid var(--input-border); background: var(--input-bg); color: var(--text); }
+        .field input[disabled] { opacity: 0.75; cursor: not-allowed; }
+        .field.full { grid-column: 1 / -1; }
+        .profile-note { color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
+        .modal-actions { display:flex; justify-content:flex-end; gap:12px; margin-top: 22px; }
+        .btn-secondary, .btn-primary { border:none; border-radius: 14px; padding: 12px 18px; cursor:pointer; font-weight: 600; }
+        .btn-secondary { background: rgba(137, 160, 188, 0.18); color: var(--text); }
+        .btn-primary { background: var(--primary); color: white; }
+        .profile-message { display:none; margin-top: 16px; padding: 12px 14px; border-radius: 14px; font-size: 0.9rem; }
+        .profile-message.success { display:block; background: rgba(35, 213, 171, 0.14); color: #18a07f; }
+        .profile-message.error { display:block; background: rgba(231, 60, 126, 0.14); color: #cc4665; }
+
+        @media (max-width: 980px) {
+            body { flex-direction: column; height: auto; overflow: auto; }
+            #side-nav {
+                width: 100%;
+                position: static;
+                height: auto;
+                padding: 22px 18px;
+                overflow: visible;
+            }
+            .brand { margin-bottom: 12px; }
+            .side-bottom { margin-top: 0; }
+            #content {
+                margin-left: 0;
+                width: 100%;
+                height: auto;
+                overflow: visible;
+                padding: 24px 18px 30px;
+            }
+            .exam-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            .btn-start, .lock-badge {
+                width: 100%;
+                text-align: center;
+            }
+            .leaderboard-table, .attempt-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .profile-grid { grid-template-columns: 1fr; }
+            .modal-head, .profile-summary, .modal-actions { flex-direction: column; }
+            .modal-actions { align-items: stretch; }
+            .leaderboard-table, .attempt-table { font-size: 0.88rem; }
+            .stats-grid, .split-grid { grid-template-columns: 1fr; }
+            .status-banner { padding: 16px; }
+            .profile-trigger, .theme-toggle, .logout-link { width: 100%; }
+            .profile-trigger { justify-content: flex-start; }
+            .panel, .stat-tile, .empty-state { padding: 18px; }
+            h1 { font-size: 1.8rem; }
+        }
+
+        @media (max-width: 520px) {
+            #content { padding: 18px 14px 24px; }
+            .exam-card { padding: 18px; }
+            .report-link { width: 100%; justify-content: center; }
+            .stat-value { font-size: 1.6rem; }
+        }
+        body.page-ready { opacity: 1; transform: translateY(0); }
+        body.page-exit { opacity: 0; transform: translateY(8px); }
+        body { transition: opacity 0.28s ease, transform 0.28s ease; }
+        @media (prefers-reduced-motion: reduce) {
+            body, body.page-ready, body.page-exit { transition: none; transform: none; opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div id="side-nav">
+        <div class="brand">Student Portal</div>
+        <a class="nav-link active">My Assessments</a>
+        <div class="side-bottom">
+            <a href="/student/profile" id="profile-trigger" class="profile-trigger">
+                <div class="profile-avatar">
+                    <img
+                        id="sidebar-profile-image"
+                        alt="Profile picture"
+                        {% if student_profile.has_profile_pic %}
+                        src="{{ url_for('static', filename='profiles/' + student_profile.profile_pic) }}"
+                        {% else %}
+                        style="display:none;"
+                        {% endif %}
+                        onerror="handleAvatarError('sidebar-profile-image', 'sidebar-profile-fallback')"
+                    >
+                    <div id="sidebar-profile-fallback" class="avatar-fallback" {% if student_profile.has_profile_pic %}style="display:none;"{% endif %}>
+                        {{ (student_profile.name[:1] if student_profile.name else 'S') | upper }}
+                    </div>
+                </div>
+                <div class="profile-meta">
+                    <strong>{{ student_profile.name }}</strong>
+                    <small>View or edit profile</small>
+                </div>
+            </a>
+            <button type="button" class="theme-toggle" onclick="toggleTheme()">Dark Mode</button>
+            <a href="/logout" class="logout-link">Logout</a>
+        </div>
+    </div>
+
+    <div id="content">
+        <h1>Welcome, {{ session['name'] }}</h1>
+        <p class="page-subtitle">Semester Group: {{ current_sem }} | Year {{ group_id }} exam is currently unlocked.</p>
+
+        <div class="status-banner">
+            <div>
+                <strong>Attempt Control</strong>
+                <p class="section-copy" style="margin:6px 0 0;">{{ attempt_summary.attempts_used }} used out of {{ attempt_summary.max_attempts }} attempt{{ '' if attempt_summary.max_attempts == 1 else 's' }}. {% if attempt_summary.allowed %}You can start the current year exam now.{% else %}{{ attempt_summary.reason }}{% endif %}</p>
+            </div>
+            <div>
+                <strong>Latest Risk</strong>
+                <p style="margin-top:8px;">
+                    <span class="pill {{ latest_risk.level|lower }}">{{ latest_risk.level }} Risk</span>
+                    <span class="pill pending">{{ latest_risk.score }} Score</span>
+                    <span class="pill pending">{{ latest_risk.decision|replace('_', ' ')|title }}</span>
+                </p>
+                {% if latest_result_id %}
+                <p style="margin-top:10px;"><a class="report-link" href="/student/result/{{ latest_result_id }}/pdf">Download Latest PDF Report</a></p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="section-block">
+            <h2>Achievement Badges</h2>
+            <p class="section-copy">Quick highlights from your recent results, rank, and proctoring history.</p>
+            {% if achievement_badges %}
+            <div class="achievement-grid">
+                {% for badge in achievement_badges %}
+                <div class="achievement-card">
+                    <strong>{{ badge.title }}</strong>
+                    <div class="stat-subtext">{{ badge.description }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">Submit a few attempts to unlock progress badges, clean-attempt milestones, and score-improvement highlights.</div>
+            {% endif %}
+        </div>
+
+        <div class="panel">
+            {% for g in range(1, 5) %}
+            <div class="exam-card {% if g == group_id %}unlocked{% else %}locked{% endif %}">
+                <div class="exam-info">
+                    <h3>Year {{ g }} Final Assessment</h3>
+                    <p class="exam-meta">Semester Coverage: {{ (g*2)-1 }} & {{ g*2 }} | 30 Questions | 50 Marks</p>
+                    <p class="exam-pattern">Pattern: 10 MCQs, 10 True/False, 10 Fill in the Blanks</p>
+                </div>
+                
+                {% if g == group_id %}
+                    {% if attempt_summary.allowed %}
+                    <a href="/exam/{{ g }}" class="btn-start">Start Now</a>
+                    {% else %}
+                    <div class="lock-badge">{{ attempt_summary.reason }}</div>
+                    {% endif %}
+                {% else %}
+                <div class="lock-badge">Locked</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="section-block">
+            <h2>Rank / Leaderboard</h2>
+            <p class="section-copy">See where you stand compared with other students based on average exam performance.</p>
+
+            {% if student_rank %}
+            <div class="stats-grid">
+                <div class="stat-tile">
+                    <div class="stat-label">Your Rank</div>
+                    <div class="stat-value">#{{ student_rank.rank }}</div>
+                    <div class="stat-subtext">Based on average score across attempts.</div>
+                </div>
+                <div class="stat-tile">
+                    <div class="stat-label">Average Score</div>
+                    <div class="stat-value">{{ student_rank.avg_score }}</div>
+                    <div class="stat-subtext">Your best score is {{ student_rank.best_score }} / 50.</div>
+                </div>
+                <div class="stat-tile">
+                    <div class="stat-label">Attempts Count</div>
+                    <div class="stat-value">{{ student_rank.attempts }}</div>
+                    <div class="stat-subtext">Each new result can improve your leaderboard position.</div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Average</th>
+                            <th>Best Score</th>
+                            <th>Attempts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in leaderboard %}
+                        <tr>
+                            <td><span class="rank-badge">{{ entry.rank }}</span></td>
+                            <td>
+                                {{ entry.name }}
+                                {% if entry.student_id == student_profile.id %}
+                                <strong>(You)</strong>
+                                {% endif %}
+                            </td>
+                            <td>{{ entry.avg_score }}</td>
+                            <td>{{ entry.best_score }} / 50</td>
+                            <td>{{ entry.attempts }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">Leaderboard will appear after exam results are available. Once you submit your first paper, your rank and the top performers will be shown here.</div>
+            {% endif %}
+        </div>
+
+        <div class="section-block">
+            <h2>Performance Analytics</h2>
+            <p class="section-copy">Track your past scores and identify the question areas that need more attention.</p>
+
+            {% if attempts_count > 0 %}
+            <div class="stats-grid">
+                <div class="stat-tile">
+                    <div class="stat-label">Attempts</div>
+                    <div class="stat-value count-up" data-count="{{ attempts_count }}">{{ attempts_count }}</div>
+                    <div class="stat-subtext">Your total recorded exam submissions.</div>
+                </div>
+                <div class="stat-tile">
+                    <div class="stat-label">Average Score</div>
+                    <div class="stat-value count-up" data-count="{{ average_score }}">{{ average_score }}</div>
+                    <div class="stat-subtext">Across all saved exam attempts.</div>
+                </div>
+                <div class="stat-tile">
+                    <div class="stat-label">Best Score</div>
+                    <div class="stat-value count-up" data-count="{{ best_score }}">{{ best_score }}</div>
+                    <div class="stat-subtext">Your highest score so far out of 50.</div>
+                </div>
+                <div class="stat-tile">
+                    <div class="stat-label">Latest Trend</div>
+                    <div class="stat-value {% if latest_trend > 0 %}trend-up{% elif latest_trend < 0 %}trend-down{% endif %}">
+                        {% if latest_trend > 0 %}+{% endif %}{{ latest_trend }}
+                    </div>
+                    <div class="stat-subtext">Difference between your latest two attempts.</div>
+                </div>
+            </div>
+
+            <div class="recommendation-card">
+                <strong>Retake Recommendation</strong>
+                <p class="section-copy" style="margin:8px 0 0;">{{ retake_recommendation }}</p>
+            </div>
+
+            <div class="insight-grid">
+                <div class="insight-card">
+                    <div class="stat-label">Strongest Topic</div>
+                    {% if strongest_topic %}
+                    <div class="stat-value">{{ strongest_topic.title }}</div>
+                    <div class="stat-subtext">{{ strongest_topic.accuracy }}% accuracy across {{ strongest_topic.attempts }} attempt{{ '' if strongest_topic.attempts == 1 else 's' }}.</div>
+                    {% else %}
+                    <div class="stat-subtext">Strongest-topic insights will appear after section-wise analyses are stored.</div>
+                    {% endif %}
+                </div>
+                <div class="insight-card">
+                    <div class="stat-label">Weakest Topic</div>
+                    {% if weakest_topic %}
+                    <div class="stat-value">{{ weakest_topic.title }}</div>
+                    <div class="stat-subtext">{{ weakest_topic.accuracy }}% accuracy so far. This is the best place to focus next.</div>
+                    {% else %}
+                    <div class="stat-subtext">Weakest-topic insights will appear after section-wise analyses are stored.</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="split-grid">
+                <div class="panel">
+                    <h3 style="margin-bottom: 8px;">Past Scores</h3>
+                    <p class="section-copy" style="margin-bottom: 14px;">Your score trend across recorded attempts.</p>
+                    <div class="chart-shell">
+                        <canvas id="scoreHistoryChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3 style="margin-bottom: 8px;">Weak Topics</h3>
+                    <p class="section-copy" style="margin-bottom: 14px;">These are your lowest-performing sections based on saved analyses.</p>
+                    {% if weak_topics %}
+                    <div class="topic-list">
+                        {% for topic in weak_topics %}
+                        <div class="topic-card">
+                            <div class="topic-meta">
+                                <strong>{{ topic.title }}</strong>
+                                <span class="topic-score">{{ topic.accuracy }}%</span>
+                            </div>
+                            <div class="stat-subtext">{{ topic.earned }} / {{ topic.possible }} marks across {{ topic.attempts }} attempt{{ '' if topic.attempts == 1 else 's' }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">Weak-topic analysis will appear for new attempts saved with section-wise exam analytics.</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="panel" style="margin-top: 18px;">
+                <h3 style="margin-bottom: 8px;">Recent Attempts</h3>
+                <p class="section-copy" style="margin-bottom: 14px;">Your latest saved exam results.</p>
+                <table class="attempt-table">
+                    <thead>
+                        <tr>
+                            <th>Year Exam</th>
+                            <th>Score</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for attempt in recent_attempts %}
+                        <tr>
+                            <td>Year {{ attempt.year_group }}</td>
+                            <td>{{ attempt.score }} / {{ attempt.total }}</td>
+                            <td>{{ attempt.date }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">No performance analytics yet. Submit an exam and this section will show your score trend, recent attempts, and weak-topic summary.</div>
+            {% endif %}
+        </div>
+
+        <div class="section-block">
+            <h2>Improvement Suggestions</h2>
+            <p class="section-copy">Suggestions are based on your latest saved section analysis.</p>
+            {% if improvement_suggestions %}
+            <div class="topic-list">
+                {% for suggestion in improvement_suggestions %}
+                <div class="topic-card">
+                    <div class="topic-meta">
+                        <strong>{{ suggestion.section }}</strong>
+                        <span class="topic-score">{{ suggestion.score_text }}</span>
+                    </div>
+                    <div class="stat-subtext">{{ suggestion.message }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">Submit an exam to receive section-wise improvement hints and revision guidance.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div id="profile-modal" aria-hidden="true">
+        <div class="profile-modal-card">
+            <div class="modal-head">
+                <div>
+                    <h2>My Profile</h2>
+                    <p>Update your details here. Roll number is fixed, but if you change semester the unlocked exam year will update on refresh.</p>
+                </div>
+                <button type="button" class="modal-close" onclick="closeProfileModal()">&times;</button>
+            </div>
+
+            <div class="profile-summary">
+                <div class="modal-avatar">
+                    <img
+                        id="modal-profile-image"
+                        alt="Profile picture"
+                        {% if student_profile.has_profile_pic %}
+                        src="{{ url_for('static', filename='profiles/' + student_profile.profile_pic) }}"
+                        {% else %}
+                        style="display:none;"
+                        {% endif %}
+                        onerror="handleAvatarError('modal-profile-image', 'modal-profile-fallback')"
+                    >
+                    <div id="modal-profile-fallback" class="avatar-fallback" {% if student_profile.has_profile_pic %}style="display:none;"{% endif %}>
+                        {{ (student_profile.name[:1] if student_profile.name else 'S') | upper }}
+                    </div>
+                </div>
+                <div class="summary-copy">
+                    <h3>{{ student_profile.name }}</h3>
+                    <p>{{ student_profile.id }} | {{ student_profile.branch or 'No branch added yet' }}</p>
+                </div>
+            </div>
+
+            <form id="profile-form">
+                <div class="profile-grid">
+                    <div class="field">
+                        <label for="profile-id">Roll Number</label>
+                        <input id="profile-id" type="text" value="{{ student_profile.id }}" disabled>
+                    </div>
+                    <div class="field">
+                        <label for="profile-name">Full Name</label>
+                        <input id="profile-name" name="name" type="text" value="{{ student_profile.name }}" required>
+                    </div>
+                    <div class="field">
+                        <label for="profile-branch">Branch</label>
+                        <input id="profile-branch" name="branch" type="text" value="{{ student_profile.branch }}" required>
+                    </div>
+                    <div class="field">
+                        <label for="profile-semester">Semester</label>
+                        <select id="profile-semester" name="semester" required>
+                            {% for year in range(1, 5) %}
+                            {% for term in range(1, 3) %}
+                            <option value="{{ year }}-{{ term }}" {% if student_profile.semester == (year ~ '-' ~ term) %}selected{% endif %}>{{ year }}-{{ term }}</option>
+                            {% endfor %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="profile-phone">Phone Number</label>
+                        <input id="profile-phone" name="phone" type="text" value="{{ student_profile.phone }}" required>
+                    </div>
+                    <div class="field full">
+                        <label for="profile-pic">Profile Picture</label>
+                        <input id="profile-pic" name="profile_pic" type="file" accept=".png,.jpg,.jpeg" onchange="previewProfilePicture(event)">
+                        <p class="profile-note">Supported formats: PNG, JPG, JPEG.</p>
+                    </div>
+                </div>
+                <div id="profile-message" class="profile-message"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeProfileModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function applyTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('portal-theme', theme);
+            document.querySelector('.theme-toggle').textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+        }
+
+        function toggleTheme() {
+            const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+            applyTheme(nextTheme);
+        }
+
+        function openProfileModal() {
+            const modal = document.getElementById('profile-modal');
+            if (!modal) {
+                return;
+            }
+
+            modal.classList.add('is-open');
+            modal.style.display = 'flex';
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProfileModal() {
+            const modal = document.getElementById('profile-modal');
+            if (!modal) {
+                return;
+            }
+
+            modal.classList.remove('is-open');
+            modal.style.display = 'none';
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        function handleAvatarError(imageId, fallbackId) {
+            document.getElementById(imageId).style.display = 'none';
+            document.getElementById(fallbackId).style.display = 'flex';
+        }
+
+        function setAvatarPreview(imageId, fallbackId, src) {
+            const image = document.getElementById(imageId);
+            const fallback = document.getElementById(fallbackId);
+            image.src = src;
+            image.style.display = 'block';
+            fallback.style.display = 'none';
+        }
+
+        function previewProfilePicture(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            const previewUrl = URL.createObjectURL(file);
+            setAvatarPreview('sidebar-profile-image', 'sidebar-profile-fallback', previewUrl);
+            setAvatarPreview('modal-profile-image', 'modal-profile-fallback', previewUrl);
+        }
+
+        function showProfileMessage(type, message) {
+            const messageBox = document.getElementById('profile-message');
+            messageBox.className = `profile-message ${type}`;
+            messageBox.textContent = message;
+        }
+
+        const profileForm = document.getElementById('profile-form');
+        if (profileForm) {
+            profileForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const submitButton = this.querySelector('.btn-primary');
+                submitButton.disabled = true;
+                submitButton.textContent = 'Saving...';
+
+                try {
+                    const response = await fetch('/student/update_profile', {
+                        method: 'POST',
+                        body: new FormData(this)
+                    });
+                    const data = await response.json();
+
+                    if (!response.ok || data.status !== 'success') {
+                        showProfileMessage('error', data.message || 'Could not update the profile.');
+                        return;
+                    }
+
+                    showProfileMessage('success', data.message || 'Profile updated successfully.');
+                    setTimeout(() => window.location.reload(), 700);
+                } catch (error) {
+                    showProfileMessage('error', 'A network error occurred while saving the profile.');
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Save Profile';
+                }
+            });
+        }
+
+        const profileModal = document.getElementById('profile-modal');
+        if (profileModal) {
+            profileModal.addEventListener('click', function(event) {
+                if (event.target === this) {
+                    closeProfileModal();
+                }
+            });
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeProfileModal();
+            }
+        });
+
+        applyTheme(document.documentElement.dataset.theme || 'light');
+
+        const scoreHistoryLabels = {{ score_history_labels | tojson }};
+        const scoreHistoryValues = {{ score_history_values | tojson }};
+        document.querySelectorAll('.count-up').forEach((node, index) => {
+            const target = Number(node.dataset.count || 0);
+            if (Number.isNaN(target)) return;
+            const decimals = String(node.dataset.count || '').includes('.') ? 1 : 0;
+            const duration = 900 + (index * 90);
+            const start = performance.now();
+            const step = (now) => {
+                const progress = Math.min(1, (now - start) / duration);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                node.textContent = (target * eased).toFixed(decimals).replace(/\.0$/, '');
+                if (progress < 1) requestAnimationFrame(step);
+                else node.textContent = String(target).replace(/\.0$/, '');
+            };
+            requestAnimationFrame(step);
+        });
+        if (window.Chart && scoreHistoryLabels.length) {
+            Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--muted').trim() || '#66768d';
+            new Chart(document.getElementById('scoreHistoryChart'), {
+                type: 'line',
+                data: {
+                    labels: scoreHistoryLabels,
+                    datasets: [{
+                        label: 'Score',
+                        data: scoreHistoryValues,
+                        borderColor: '#23a6d5',
+                        backgroundColor: 'rgba(35, 166, 213, 0.14)',
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#23a6d5'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: 50,
+                            ticks: { stepSize: 10 },
+                            grid: { color: 'rgba(137, 160, 188, 0.18)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+    <script>
+        (function () {
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const enterPage = () => {
+                document.body.classList.add('page-ready');
+                document.body.classList.remove('page-exit');
+            };
+            window.transitionTo = function (url) {
+                if (!url) return;
+                if (reduceMotion) { window.location.href = url; return; }
+                document.body.classList.remove('page-ready');
+                document.body.classList.add('page-exit');
+                setTimeout(() => { window.location.href = url; }, 220);
+            };
+            document.addEventListener('click', (event) => {
+                const link = event.target.closest('a[href]');
+                if (!link) return;
+                const href = link.getAttribute('href') || '';
+                if (!href || href.startsWith('#') || link.target === '_blank' || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                const absoluteUrl = new URL(link.href, window.location.href);
+                if (absoluteUrl.origin !== window.location.origin) return;
+                event.preventDefault();
+                transitionTo(absoluteUrl.href);
+            });
+            window.addEventListener('pageshow', enterPage);
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', enterPage);
+            else enterPage();
+        })();
+    </script>
+</body>
+</html>

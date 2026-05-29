@@ -1,0 +1,17 @@
+.tilt-surface {
+    transform-style: preserve-3d;
+    will-change: transform, box-shadow;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.tilt-surface.tilt-active {
+    box-shadow: 0 22px 42px rgba(15, 31, 56, 0.18);
+}
+
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .tilt-surface,
+    .tilt-surface.tilt-active {
+        transform: none !important;
+        transition: none !important;
+    }
+}

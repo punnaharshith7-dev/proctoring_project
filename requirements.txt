@@ -1,0 +1,9 @@
+flask
+flask-socketio
+ultralytics
+opencv-python-headless
+eventlet
+gunicorn
+numpy
+werkzeug
+Pillow

@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Overwatch | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='tilt-effects.css') }}">
+    <script src="{{ url_for('static', filename='tilt-effects.js') }}" defer></script>
+    <style>
+        :root {
+            --bg: #f3f7fb;
+            --panel: rgba(255, 255, 255, 0.88);
+            --panel-border: rgba(137, 160, 188, 0.22);
+            --text: #142033;
+            --muted: #66768d;
+            --primary: #1f7ae0;
+            --teal: #1aa7a1;
+            --gold: #f4a900;
+            --danger: #df4d6a;
+            --sidebar: #102038;
+            --shadow: 0 20px 45px rgba(15, 32, 56, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            background:
+                radial-gradient(circle at top left, rgba(31, 122, 224, 0.16), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(26, 167, 161, 0.12), transparent 24%),
+                var(--bg);
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow: hidden;
+        }
+
+        #side-nav {
+            width: 290px;
+            min-width: 290px;
+            background: linear-gradient(180deg, #12233d 0%, #0d182b 100%);
+            color: white;
+            padding: 28px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            height: 100vh;
+            box-shadow: 18px 0 40px rgba(13, 24, 43, 0.18);
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-gutter: stable;
+        }
+
+        .nav-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .nav-copy {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.92rem;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .nav-link {
+            padding: 14px 16px;
+            color: rgba(255, 255, 255, 0.72);
+            text-decoration: none;
+            border-radius: 14px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            display: block;
+            transition: 0.25s ease;
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .logout-link {
+            margin-top: auto;
+            color: #ff9fb5;
+            text-decoration: none;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: rgba(223, 77, 106, 0.08);
+        }
+
+        #content {
+            margin-left: 290px;
+            width: calc(100% - 290px);
+            max-width: calc(100% - 290px);
+            height: 100vh;
+            padding: 34px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.28s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .eyebrow {
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 0.75rem;
+            margin-bottom: 10px;
+        }
+
+        .page-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            max-width: 760px;
+            color: var(--muted);
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+
+        .stats-grid,
+        .charts-grid {
+            display: grid;
+            gap: 22px;
+            margin-bottom: 24px;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        .charts-grid {
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        }
+
+        .stat-card,
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 26px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(12px);
+        }
+
+        .stat-card {
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: "";
+            position: absolute;
+            top: -42px;
+            right: -10px;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(31, 122, 224, 0.16), rgba(26, 167, 161, 0.06));
+        }
+
+        .stat-label {
+            font-size: 0.84rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            margin-bottom: 14px;
+        }
+
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .stat-meta {
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .panel {
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .panel-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .panel-head h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+        }
+
+        .panel-note {
+            color: var(--muted);
+            font-size: 0.88rem;
+        }
+
+        .year-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 14px;
+        }
+
+        .year-card {
+            padding: 18px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, #f8fbff 0%, #eef6ff 100%);
+            border: 1px solid rgba(31, 122, 224, 0.12);
+        }
+
+        .year-label {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.75rem;
+            margin-bottom: 10px;
+        }
+
+        .year-value {
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--primary);
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+
+        .chart-shell {
+            position: relative;
+            height: 320px;
+        }
+
+        .chart-shell canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .empty-state {
+            min-height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 24px;
+            border-radius: 18px;
+            border: 1px dashed rgba(102, 118, 141, 0.32);
+            color: var(--muted);
+            background: rgba(245, 248, 252, 0.9);
+            line-height: 1.7;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 14px 10px;
+            border-bottom: 1px solid rgba(137, 160, 188, 0.14);
+            font-size: 0.92rem;
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        tbody tr:hover {
+            background: rgba(31, 122, 224, 0.04);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.74rem;
+        }
+
+        .badge-danger {
+            background: rgba(223, 77, 106, 0.12);
+            color: var(--danger);
+        }
+
+        .badge-info {
+            background: rgba(31, 122, 224, 0.12);
+            color: var(--primary);
+        }
+
+        .badge-success {
+            background: rgba(26, 167, 161, 0.12);
+            color: var(--teal);
+        }
+
+        .student-pic {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(31, 122, 224, 0.12);
+        }
+
+        .proof-cell {
+            min-width: 132px;
+        }
+
+        .proof-thumb {
+            width: 72px;
+            height: 54px;
+            border-radius: 12px;
+            object-fit: cover;
+            display: block;
+            border: 1px solid rgba(137, 160, 188, 0.18);
+            box-shadow: 0 8px 18px rgba(15, 32, 56, 0.12);
+            margin-bottom: 8px;
+        }
+
+        .proof-link {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 0.82rem;
+        }
+
+        .proof-missing {
+            color: var(--muted);
+            font-size: 0.82rem;
+        }
+
+        .btn-del,
+        .btn-clear {
+            border: none;
+            padding: 11px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: 0.25s ease;
+        }
+
+        .btn-del {
+            color: var(--danger);
+            background: rgba(223, 77, 106, 0.08);
+        }
+
+        .btn-del:hover {
+            background: rgba(223, 77, 106, 0.16);
+        }
+
+        .btn-clear {
+            background: linear-gradient(135deg, var(--primary), #0f5cbc);
+            color: white;
+        }
+
+        .btn-clear:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(31, 122, 224, 0.24);
+        }
+
+        .danger-btn {
+            background: linear-gradient(135deg, var(--danger), #bf3050);
+        }
+
+        .search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .stack {
+            display: grid;
+            gap: 16px;
+        }
+
+        .live-grid,
+        .form-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .live-grid {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        .form-grid {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(137, 160, 188, 0.34);
+            background: rgba(255, 255, 255, 0.95);
+            font: inherit;
+            color: var(--text);
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .live-card {
+            padding: 18px;
+            border-radius: 20px;
+            border: 1px solid rgba(137, 160, 188, 0.18);
+            background: rgba(255, 255, 255, 0.9);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .live-card.pulse {
+            border-color: rgba(223, 77, 106, 0.35);
+            box-shadow: 0 0 0 0 rgba(223, 77, 106, 0.24);
+            animation: pulseRing 1.2s ease;
+        }
+
+        .thumb {
+            width: 100%;
+            max-height: 180px;
+            object-fit: cover;
+            border-radius: 14px;
+            margin-top: 12px;
+            border: 1px solid rgba(137, 160, 188, 0.18);
+        }
+
+        input {
+            flex: 1 1 280px;
+            min-width: 220px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(137, 160, 188, 0.34);
+            background: rgba(255, 255, 255, 0.95);
+            font: inherit;
+            color: var(--text);
+        }
+
+        .row-highlight {
+            background: rgba(244, 169, 0, 0.12);
+        }
+
+        .muted-copy {
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .timeline-grid,
+        .announcement-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .timeline-grid {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .timeline-card,
+        .announcement-card {
+            border-radius: 20px;
+            border: 1px solid rgba(137, 160, 188, 0.18);
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.88);
+        }
+
+        .timeline-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 14px;
+            margin-top: 12px;
+            border: 1px solid rgba(137, 160, 188, 0.18);
+        }
+
+        .timeline-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 0.84rem;
+        }
+
+        .stat-card.reveal,
+        .panel.reveal {
+            animation: riseIn 0.5s ease both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes riseIn {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseRing {
+            0% { box-shadow: 0 0 0 0 rgba(223, 77, 106, 0.24); }
+            100% { box-shadow: 0 0 0 18px rgba(223, 77, 106, 0); }
+        }
+
+        @media (max-width: 980px) {
+            body {
+                flex-direction: column;
+                overflow: auto;
+            }
+
+            #side-nav {
+                position: static;
+                width: 100%;
+                min-width: 100%;
+                height: auto;
+                box-shadow: none;
+                top: auto;
+                left: auto;
+                bottom: auto;
+                overflow: visible;
+            }
+
+            #content {
+                margin-left: 0;
+                width: 100%;
+                max-width: 100%;
+                height: auto;
+                padding: 24px;
+                overflow: visible;
+            }
+
+            .logout-link {
+                margin-top: 10px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            #content {
+                padding: 18px;
+            }
+
+            .panel,
+            .stat-card {
+                padding: 20px;
+            }
+
+            th,
+            td {
+                padding: 12px 8px;
+            }
+
+            .chart-shell {
+                height: 260px;
+            }
+        }
+        body.page-ready { opacity: 1; transform: translateY(0); }
+        body.page-exit { opacity: 0; transform: translateY(8px); }
+        body { transition: opacity 0.28s ease, transform 0.28s ease; }
+        @media (prefers-reduced-motion: reduce) {
+            body, body.page-ready, body.page-exit { transition: none; transform: none; opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div id="side-nav">
+        <div class="nav-brand">Overwatch Admin</div>
+        <p class="nav-copy">Track marks, logins, and proctoring events from a single statistical dashboard.</p>
+        <div class="nav-link active" data-section="dashboard" onclick="showSection('dashboard', this)">Dashboard</div>
+        <div class="nav-link" data-section="proctoring" onclick="showSection('proctoring', this)">Live Proctoring</div>
+        <div class="nav-link" data-section="profiles" onclick="showSection('profiles', this)">Student Profiles</div>
+        <div class="nav-link" data-section="records" onclick="showSection('records', this)">Examination Records</div>
+        <div class="nav-link" data-section="create-exam" onclick="showSection('create-exam', this)">Create Exam</div>
+        <div class="nav-link" data-section="settings" onclick="showSection('settings', this)">System Settings</div>
+        <a href="/logout" class="logout-link">Logout</a>
+    </div>
+
+    <div id="content">
+        <div id="dashboard" class="section active">
+            <p class="eyebrow">Admin Analytics</p>
+            <h1 class="page-title">Statistical View</h1>
+            <p class="page-subtitle">This view combines exam marks, student login activity, and score improvement trends so the admin can quickly spot participation and performance changes.</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Exams Submitted</div>
+                    <div class="stat-value count-up" data-count="{{ submissions }}">{{ submissions }}</div>
+                    <div class="stat-meta">Total completed exam attempts recorded.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Average Marks</div>
+                    <div class="stat-value"><span class="count-up" data-count="{{ avg_score }}">{{ avg_score }}</span> / 50</div>
+                    <div class="stat-meta">Overall average score across stored results.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Student Logins</div>
+                    <div class="stat-value count-up" data-count="{{ total_student_logins }}">{{ total_student_logins }}</div>
+                    <div class="stat-meta">{{ active_login_students }} unique students have logged in.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Improved Students</div>
+                    <div class="stat-value count-up" data-count="{{ improved_students }}">{{ improved_students }}</div>
+                    <div class="stat-meta">Students whose latest mark is higher than their first.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Violations Detected</div>
+                    <div class="stat-value count-up" data-count="{{ violation_count }}">{{ violation_count }}</div>
+                    <div class="stat-meta">All recorded proctoring alerts in the system.</div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Year-wise Submissions</h3>
+                    <div class="panel-note">Quick participation split by academic year</div>
+                </div>
+                <div class="year-stats-grid">
+                    {% for year, count in year_stats.items() %}
+                    <div class="year-card">
+                        <div class="year-label">Year {{ year }}</div>
+                        <div class="year-value">{{ count }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="panel">
+                    <div class="panel-head">
+                        <h3>Average Marks by Semester</h3>
+                        <div class="panel-note">Bar chart</div>
+                    </div>
+                    {% if has_exam_data and marks_chart_labels %}
+                    <div class="chart-shell">
+                        <canvas id="marksChart"></canvas>
+                    </div>
+                    {% else %}
+                    <div class="empty-state">No exam results are available yet. Once students submit exams, the marks chart will appear here.</div>
+                    {% endif %}
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <h3>Marks Distribution</h3>
+                        <div class="panel-note">Pie chart</div>
+                    </div>
+                    {% if has_exam_data %}
+                    <div class="chart-shell">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                    {% else %}
+                    <div class="empty-state">No marks distribution to show yet because there are no saved exam records.</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="panel">
+                    <div class="panel-head">
+                        <h3>Student Logins in the Last 7 Days</h3>
+                        <div class="panel-note">Daily trend</div>
+                    </div>
+                    {% if has_login_data %}
+                    <div class="chart-shell">
+                        <canvas id="loginTrendChart"></canvas>
+                    </div>
+                    {% else %}
+                    <div class="empty-state">Login tracking starts from this update onward. New student logins will begin filling this chart.</div>
+                    {% endif %}
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <h3>Top Improvers</h3>
+                        <div class="panel-note">First exam vs latest exam</div>
+                    </div>
+                    {% if top_improvers %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Roll Number</th>
+                                <th>Name</th>
+                                <th>First Score</th>
+                                <th>Latest Score</th>
+                                <th>Improvement</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in top_improvers %}
+                            <tr>
+                                <td><span class="badge badge-info">{{ student.student_id }}</span></td>
+                                <td>{{ student.name }}</td>
+                                <td>{{ student.first_score }} / 50</td>
+                                <td>{{ student.latest_score }} / 50</td>
+                                <td><span class="badge badge-success">+{{ student.change }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-state">Improvement data needs at least two exam attempts for the same student. Once repeat attempts happen, the top improvers table will update automatically.</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Recent Student Logins</h3>
+                    <div class="panel-note">Latest successful student sign-ins</div>
+                </div>
+                {% if recent_logins %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Roll Number</th>
+                            <th>Name</th>
+                            <th>Login Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for login in recent_logins %}
+                        <tr>
+                            <td><span class="badge badge-info">{{ login[0] }}</span></td>
+                            <td>{{ login[1] }}</td>
+                            <td>{{ login[2] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <div class="empty-state">There are no tracked student logins yet. Students will appear here after their next successful login.</div>
+                {% endif %}
+            </div>
+
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Open Notifications</h3>
+                    <div class="panel-note">Severe cheating alerts and repeated suspicious actions</div>
+                </div>
+                {% if notifications %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Type</th>
+                            <th>Severity</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="notification-table">
+                        {% for item in notifications %}
+                        <tr>
+                            <td>{{ item[1] }}</td>
+                            <td>{{ item[2] }}</td>
+                            <td><span class="badge badge-danger">{{ item[3] }}</span></td>
+                            <td>{{ item[5] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">No severe notifications are open right now.</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="proctoring" class="section">
+            <p class="eyebrow">Monitoring</p>
+            <h1 class="page-title">Live Violation Data</h1>
+            <p class="page-subtitle">Review the latest proctoring alerts captured during exams, plus live active exam telemetry.</p>
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Live Active Exams</h3>
+                    <div class="panel-note">Current writer, timer, webcam frame, mic status, and live violation count</div>
+                </div>
+                {% if live_exams %}
+                <div class="live-grid" id="live-exam-grid">
+                    {% for exam in live_exams %}
+                    <div class="live-card">
+                        <strong>{{ exam.student_name or exam.student_id }}</strong>
+                        <div class="muted-copy" style="margin-top:8px;">{{ exam.student_id }} | Year {{ exam.year_group }} | {{ exam.remaining_seconds or 0 }} sec left</div>
+                        <div class="muted-copy">Mic: {{ exam.mic_status or 'unknown' }} | Violations: {{ exam.violation_count or 0 }}</div>
+                        <div class="muted-copy">Risk: {{ exam.risk_score or 0 }} ({{ exam.risk_level or 'Low' }}) | Face Verified: {{ 'Yes' if exam.face_verified else 'No' }}</div>
+                        {% if exam.current_frame %}
+                        <img class="thumb" src="{{ exam.current_frame if exam.current_frame.startswith('data:') else url_for('static', filename=exam.current_frame) }}" alt="Live frame">
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state" id="live-exam-grid">No students are actively writing right now.</div>
+                {% endif %}
+            </div>
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Admin Announcement Panel</h3>
+                    <div class="panel-note">Send a live warning to one student or broadcast to every active writer</div>
+                </div>
+                <div class="stack">
+                    <div class="form-grid">
+                        <input id="announcement-student-id" placeholder="Student ID (leave blank to broadcast)">
+                        <input id="announcement-message" placeholder="Type a warning or exam notice">
+                    </div>
+                    <div class="actions" style="display:flex;gap:12px;flex-wrap:wrap;">
+                        <button class="btn-clear" type="button" onclick="sendAnnouncement()">Send Announcement</button>
+                        <div class="muted-copy" id="announcement-feedback">Announcements appear in the student exam view as live toasts.</div>
+                    </div>
+                </div>
+                <div class="announcement-grid" style="margin-top:18px;" id="announcement-history">
+                    {% if announcements %}
+                    {% for item in announcements %}
+                    <div class="announcement-card">
+                        <strong>{{ item[2] == 'individual' and item[1] or 'Broadcast' }}</strong>
+                        <div class="muted-copy" style="margin-top:8px;">{{ item[3] }}</div>
+                        <div class="timeline-meta"><span>{{ item[4] }}</span><span>{{ item[5] }}</span></div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="empty-state">No admin announcements have been sent yet.</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Violation Replay Timeline</h3>
+                    <div class="panel-note">Recent alert thumbnails with timestamps for fast case review</div>
+                </div>
+                {% if logs %}
+                <div class="timeline-grid" id="violation-timeline">
+                    {% for log in logs[:8] %}
+                    <div class="timeline-card">
+                        <span class="badge badge-danger">{{ log[6] }}</span>
+                        <h4 style="margin-top:10px;">{{ log[2] }} | {{ log[1] }}</h4>
+                        <p class="muted-copy" style="margin-top:8px;">{{ log[3] }}</p>
+                        <div class="timeline-meta"><span>{{ log[8] or log[4] }}</span><span>Score {{ log[7] or 0 }}</span></div>
+                        {% if log[5] %}
+                        <a href="{{ url_for('static', filename=log[5]) }}" target="_blank" rel="noopener">
+                            <img src="{{ url_for('static', filename=log[5]) }}" alt="Violation proof">
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">No recent violation replay cards are available yet.</div>
+                {% endif %}
+            </div>
+            <div class="panel">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Severity</th>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Violation</th>
+                            <th>Time</th>
+                            <th>Proof</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td><span class="badge badge-danger">{{ log[6] }}</span></td>
+                            <td>{{ log[1] }}</td>
+                            <td>{{ log[2] }}</td>
+                            <td><span class="badge badge-danger">{{ log[3] }}</span></td>
+                            <td>{{ log[8] or log[4] }}</td>
+                            <td class="proof-cell">
+                                {% if log[5] %}
+                                <a href="{{ url_for('static', filename=log[5]) }}" target="_blank" rel="noopener">
+                                    <img src="{{ url_for('static', filename=log[5]) }}" alt="Violation proof" class="proof-thumb">
+                                </a>
+                                <a href="{{ url_for('static', filename=log[5]) }}" target="_blank" rel="noopener" class="proof-link">View Proof</a>
+                                {% else %}
+                                <span class="proof-missing">No proof</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="profiles" class="section">
+            <p class="eyebrow">Directory</p>
+            <h1 class="page-title">Registered Student Details</h1>
+            <p class="page-subtitle">Manage student records and profile information from one place.</p>
+            <div class="panel">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Photo</th>
+                            <th>Roll Number</th>
+                            <th>Name</th>
+                            <th>Branch</th>
+                            <th>Semester</th>
+                            <th>Phone</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in all_students %}
+                        <tr id="student-{{ s[0] }}">
+                            <td><img src="{{ url_for('static', filename='profiles/' + s[5]) }}" class="student-pic" alt="{{ s[1] }}"></td>
+                            <td><span class="badge badge-info">{{ s[0] }}</span></td>
+                            <td><strong>{{ s[1] }}</strong></td>
+                            <td>{{ s[2] }}</td>
+                            <td>{{ s[3] }}</td>
+                            <td>{{ s[4] }}</td>
+                            <td><button class="btn-del" onclick="deleteStudent('{{ s[0] }}')">Delete Profile</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="records" class="section">
+            <p class="eyebrow">Exams</p>
+            <h1 class="page-title">Examination Records</h1>
+            <p class="page-subtitle">Review saved marks, cheating risk, final proctoring decisions, and export filtered data.</p>
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Filters And Export</h3>
+                    <div class="panel-note">Branch, semester, date, and year exam</div>
+                </div>
+                <form method="get" action="/admin/dashboard" class="form-grid">
+                    <select name="branch">
+                        <option value="">All Branches</option>
+                        {% for branch in filter_options.branches %}
+                        <option value="{{ branch }}" {% if filters.branch == branch %}selected{% endif %}>{{ branch }}</option>
+                        {% endfor %}
+                    </select>
+                    <select name="semester">
+                        <option value="">All Semesters</option>
+                        {% for semester in filter_options.semesters %}
+                        <option value="{{ semester }}" {% if filters.semester == semester %}selected{% endif %}>{{ semester }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="date" name="date" value="{{ filters.date }}">
+                    <select name="year_group">
+                        <option value="">All Year Exams</option>
+                        {% for year in range(1, 5) %}
+                        <option value="{{ year }}" {% if filters.year_group == (year|string) %}selected{% endif %}>Year {{ year }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn-clear" type="submit">Apply Filters</button>
+                    <a class="btn-clear" href="{{ url_for('export_admin_data', export_format='csv', branch=filters.branch, semester=filters.semester, date=filters.date, year_group=filters.year_group) }}" style="text-decoration:none;display:inline-flex;justify-content:center;align-items:center;">Export CSV</a>
+                    <a class="btn-clear" href="{{ url_for('export_admin_data', export_format='pdf', branch=filters.branch, semester=filters.semester, date=filters.date, year_group=filters.year_group) }}" style="text-decoration:none;display:inline-flex;justify-content:center;align-items:center;">Export PDF</a>
+                </form>
+            </div>
+            <div class="panel">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Case</th>
+                            <th>Roll Number</th>
+                            <th>Name</th>
+                            <th>Branch</th>
+                            <th>Semester</th>
+                            <th>Marks Got</th>
+                            <th>Risk</th>
+                            <th>Decision</th>
+                            <th>Submission Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in records %}
+                        <tr>
+                            <td>#{{ r[0] }}</td>
+                            <td>{{ r[1] }}</td>
+                            <td>{{ r[2] }}</td>
+                            <td>{{ r[3] }}</td>
+                            <td>{{ r[4] }}</td>
+                            <td><strong>{{ r[5] }} / {{ r[6] }}</strong></td>
+                            <td><span class="badge badge-info">{{ r[10] }} ({{ r[9] }})</span></td>
+                            <td>
+                                <select onchange="updateDecision({{ r[0] }}, this.value)">
+                                    <option value="pending" {% if r[11] == 'pending' %}selected{% endif %}>Pending</option>
+                                    <option value="clean" {% if r[11] == 'clean' %}selected{% endif %}>Clean</option>
+                                    <option value="warning" {% if r[11] == 'warning' %}selected{% endif %}>Warning</option>
+                                    <option value="malpractice_confirmed" {% if r[11] == 'malpractice_confirmed' %}selected{% endif %}>Malpractice Confirmed</option>
+                                </select>
+                            </td>
+                            <td>{{ r[7] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="create-exam" class="section">
+            <p class="eyebrow">Exam Builder</p>
+            <h1 class="page-title">Create Exam</h1>
+            <p class="page-subtitle">Manage the question bank and configure attempt rules, retake access, cooldown, duration, and face verification threshold from one dedicated section.</p>
+
+            <div class="panel" id="question-bank">
+                <div class="panel-head">
+                    <h3>Question Bank Management</h3>
+                    <div class="panel-note">Add, review, and delete questions by year, section, topic, and difficulty</div>
+                </div>
+                <form method="post" action="/admin/question_bank" class="stack">
+                    <div class="form-grid">
+                        <select name="year_group">
+                            {% for year in range(1, 5) %}
+                            <option value="{{ year }}">Year {{ year }}</option>
+                            {% endfor %}
+                        </select>
+                        <select name="section_key">
+                            <option value="section_a">Section A</option>
+                            <option value="section_b">Section B</option>
+                            <option value="section_c">Section C</option>
+                        </select>
+                        <input name="topic" placeholder="Topic">
+                        <select name="difficulty">
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                    <textarea name="question_text" placeholder="Question text"></textarea>
+                    <input name="options" placeholder="Options separated by | for MCQ/True-False">
+                    <input name="answer_text" placeholder="Correct answer">
+                    <textarea name="explanation" placeholder="Explanation or revision note"></textarea>
+                    <div><button type="submit" class="btn-clear">Add Question</button></div>
+                </form>
+                <br>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Year</th>
+                            <th>Section</th>
+                            <th>Topic</th>
+                            <th>Difficulty</th>
+                            <th>Question</th>
+                            <th>Answer</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for q in question_bank_rows %}
+                        <tr id="question-{{ q[0] }}">
+                            <td>{{ q[0] }}</td>
+                            <td>{{ q[1] }}</td>
+                            <td>{{ q[2] }}</td>
+                            <td>{{ q[3] }}</td>
+                            <td>{{ q[4] }}</td>
+                            <td>{{ q[5] }}</td>
+                            <td>{{ q[6] }}</td>
+                            <td><button class="btn-del" onclick="deleteQuestion({{ q[0] }})">Delete</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Exam Attempt Control</h3>
+                    <div class="panel-note">Configure attempts, retakes, cooldowns, duration, and face match threshold</div>
+                </div>
+                <form method="post" action="/admin/exam_settings" class="stack">
+                    <div class="form-grid">
+                        <label><input type="checkbox" name="one_attempt_only" {% if exam_settings.one_attempt_only %}checked{% endif %}> One attempt only</label>
+                        <label><input type="checkbox" name="retake_allowed" {% if exam_settings.retake_allowed %}checked{% endif %}> Retake allowed</label>
+                        <input type="number" min="1" name="max_attempts" value="{{ exam_settings.max_attempts }}" placeholder="Max attempts">
+                        <input type="number" min="0" name="cooldown_minutes" value="{{ exam_settings.cooldown_minutes }}" placeholder="Cooldown minutes">
+                        <input type="number" min="10" name="exam_duration_minutes" value="{{ exam_settings.exam_duration_minutes }}" placeholder="Duration minutes">
+                        <input type="number" min="0.1" max="0.99" step="0.01" name="face_match_threshold" value="{{ exam_settings.face_match_threshold }}" placeholder="Face threshold">
+                    </div>
+                    <div><button class="btn-clear" type="submit">Save Exam Settings</button></div>
+                </form>
+            </div>
+        </div>
+
+        <div id="settings" class="section">
+            <p class="eyebrow">Tools</p>
+            <h1 class="page-title">System Settings</h1>
+            <p class="page-subtitle">Search for a student quickly or manage stored proctoring logs.</p>
+
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Search Student Info</h3>
+                    <div class="panel-note">Jump directly to a profile by roll number</div>
+                </div>
+                <div class="search-row">
+                    <input type="text" id="searchRoll" placeholder="Enter Roll Number">
+                    <button class="btn-clear" onclick="searchStudent()">Search Student</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>Data Management</h3>
+                    <div class="panel-note">Danger zone</div>
+                </div>
+                <p class="muted-copy">This action permanently deletes all stored violation logs from the database. Analytics for student logins and marks will remain untouched.</p>
+                <br>
+                <button class="btn-clear danger-btn" onclick="clearLogs()">Clear All Violation Logs</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const adminSocket = window.io ? io() : {
+            emit() {},
+            on() {},
+            disconnect() {}
+        };
+        let lastAlertStudentId = '';
+
+        function showSection(id, btn) {
+            document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+
+            const activeButton = btn || document.querySelector(`.nav-link[data-section="${id}"]`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+
+        async function deleteStudent(sid) {
+            if (confirm("Are you sure you want to delete this student? All their exam records, login history, and violations will be removed permanently.")) {
+                const res = await fetch(`/admin/delete_student/${sid}`, { method: 'POST' });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    const row = document.getElementById(`student-${sid}`);
+                    if (row) {
+                        row.remove();
+                    }
+                    alert("Profile deleted successfully.");
+                } else {
+                    alert("Error deleting student.");
+                }
+            }
+        }
+
+        async function sendAnnouncement() {
+            const studentId = document.getElementById('announcement-student-id').value.trim().toUpperCase();
+            const message = document.getElementById('announcement-message').value.trim();
+            const feedback = document.getElementById('announcement-feedback');
+            if (!message) {
+                feedback.textContent = 'Type a message before sending the announcement.';
+                return;
+            }
+            try {
+                const res = await fetch('/admin/announce', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ student_id: studentId, message })
+                });
+                const data = await res.json();
+                if (!res.ok || data.status !== 'success') {
+                    feedback.textContent = data.message || 'Could not send the announcement.';
+                    return;
+                }
+                feedback.textContent = `Announcement sent at ${data.created_at}. Delivered to ${data.delivered} active session(s).`;
+                document.getElementById('announcement-message').value = '';
+                prependAnnouncementHistory({
+                    student_id: studentId,
+                    audience: studentId ? 'individual' : 'broadcast',
+                    message,
+                    created_at: data.created_at,
+                    created_by: 'ADMIN'
+                });
+            } catch (error) {
+                feedback.textContent = 'Network error while sending the announcement.';
+            }
+        }
+
+        function prependAnnouncementHistory(payload) {
+            const container = document.getElementById('announcement-history');
+            if (!container) return;
+            const empty = container.querySelector('.empty-state');
+            if (empty) empty.remove();
+            const card = document.createElement('div');
+            card.className = 'announcement-card';
+            card.innerHTML = `
+                <strong>${payload.audience === 'individual' ? payload.student_id : 'Broadcast'}</strong>
+                <div class="muted-copy" style="margin-top:8px;">${payload.message}</div>
+                <div class="timeline-meta"><span>${payload.created_at}</span><span>${payload.created_by || 'ADMIN'}</span></div>
+            `;
+            container.prepend(card);
+        }
+
+        async function deleteQuestion(id) {
+            if (!confirm("Delete this question from the managed bank?")) return;
+            const res = await fetch(`/admin/question_bank/${id}/delete`, { method: 'POST' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                document.getElementById(`question-${id}`)?.remove();
+            }
+        }
+
+        async function updateDecision(resultId, decision) {
+            const res = await fetch(`/admin/result/${resultId}/decision`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ decision })
+            });
+            const data = await res.json();
+            if (data.status !== 'success') {
+                alert(data.message || 'Could not update decision.');
+            }
+        }
+
+        function clearLogs() {
+            if (confirm("Are you sure? This cannot be undone.")) {
+                fetch('/admin/clear_logs', { method: 'POST' })
+                    .then(() => location.reload());
+            }
+        }
+
+        function searchStudent() {
+            const rollInput = document.getElementById('searchRoll');
+            const roll = rollInput.value.trim().toUpperCase();
+
+            document.querySelectorAll('#profiles tbody tr').forEach(row => row.classList.remove('row-highlight'));
+
+            if (!roll) {
+                alert("Enter a roll number to search.");
+                return;
+            }
+
+            const row = document.getElementById(`student-${roll}`);
+            showSection('profiles');
+
+            if (row) {
+                row.classList.add('row-highlight');
+                row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                alert("No student found for that roll number.");
+            }
+        }
+
+        const marksChartLabels = {{ marks_chart_labels | tojson }};
+        const marksChartValues = {{ marks_chart_values | tojson }};
+        const distributionLabels = {{ marks_distribution_labels | tojson }};
+        const distributionValues = {{ marks_distribution_values | tojson }};
+        const loginTrendLabels = {{ login_trend_labels | tojson }};
+        const loginTrendValues = {{ login_trend_values | tojson }};
+        const hasExamData = {{ has_exam_data | tojson }};
+        const hasLoginData = {{ has_login_data | tojson }};
+
+        function renderLiveExamCards(exams) {
+            const container = document.getElementById('live-exam-grid');
+            if (!container) return;
+            if (!exams.length) {
+                container.innerHTML = '<div class="empty-state">No students are actively writing right now.</div>';
+                return;
+            }
+            container.innerHTML = exams.map(exam => `
+                <div class="live-card ${lastAlertStudentId && lastAlertStudentId === exam.student_id ? 'pulse' : ''}" id="live-${exam.student_id}">
+                    <strong>${exam.student_name || exam.student_id}</strong>
+                    <div class="muted-copy" style="margin-top:8px;">${exam.student_id} | Year ${exam.year_group || '-'} | ${exam.remaining_seconds || 0} sec left</div>
+                    <div class="muted-copy">Mic: ${exam.mic_status || 'unknown'} | Violations: ${exam.violation_count || 0}</div>
+                    <div class="muted-copy">Risk: ${exam.risk_score || 0} (${exam.risk_level || 'Low'}) | Face Verified: ${exam.face_verified ? 'Yes' : 'No'}</div>
+                    <div class="actions" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+                        <button class="btn-clear" type="button" onclick="quickWarn('${exam.student_id}')">Send Warning</button>
+                    </div>
+                    ${exam.current_frame ? `<img class="thumb" src="${exam.current_frame.startsWith('data:') ? exam.current_frame : `/static/${exam.current_frame}`}" alt="Live frame">` : ''}
+                </div>
+            `).join('');
+            setTimeout(() => { lastAlertStudentId = ''; }, 1200);
+        }
+
+        function quickWarn(studentId) {
+            document.getElementById('announcement-student-id').value = studentId;
+            document.getElementById('announcement-message').value = 'Please stay in frame, remain in fullscreen, and avoid suspicious movement.';
+            sendAnnouncement();
+        }
+
+        async function refreshLiveExams() {
+            try {
+                const res = await fetch('/admin/live_exams');
+                const data = await res.json();
+                if (data.status === 'success') {
+                    renderLiveExamCards(data.live_exams || []);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        adminSocket.on('admin_notification', payload => {
+            const table = document.getElementById('notification-table');
+            if (!table) return;
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${payload.student_id}</td><td>${payload.type}</td><td><span class="badge badge-danger">${payload.severity}</span></td><td>${payload.created_at}</td>`;
+            table.prepend(row);
+            lastAlertStudentId = payload.student_id || '';
+            const liveCard = document.getElementById(`live-${payload.student_id}`);
+            if (liveCard) {
+                liveCard.classList.remove('pulse');
+                setTimeout(() => liveCard.classList.add('pulse'), 0);
+            }
+        });
+
+        setInterval(refreshLiveExams, 5000);
+        refreshLiveExams();
+
+        document.querySelectorAll('.stat-card, .panel').forEach((node, index) => {
+            node.classList.add('reveal');
+            node.style.animationDelay = `${index * 35}ms`;
+        });
+        document.querySelectorAll('.count-up').forEach((node, index) => {
+            const target = Number(node.dataset.count || 0);
+            if (Number.isNaN(target)) return;
+            const decimals = String(node.dataset.count || '').includes('.') ? 1 : 0;
+            const duration = 950 + (index * 70);
+            const start = performance.now();
+            const tick = (now) => {
+                const progress = Math.min(1, (now - start) / duration);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                node.textContent = (target * eased).toFixed(decimals).replace(/\.0$/, '');
+                if (progress < 1) requestAnimationFrame(tick);
+                else node.textContent = String(target).replace(/\.0$/, '');
+            };
+            requestAnimationFrame(tick);
+        });
+
+        if (window.Chart) {
+            Chart.defaults.color = '#66768d';
+            Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+
+            if (hasExamData && marksChartLabels.length) {
+                new Chart(document.getElementById('marksChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: marksChartLabels,
+                        datasets: [{
+                            label: 'Average Marks',
+                            data: marksChartValues,
+                            borderRadius: 12,
+                            backgroundColor: ['#1f7ae0', '#2793d6', '#1aa7a1', '#f4a900', '#df4d6a', '#7b61ff'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                suggestedMax: 50,
+                                ticks: { stepSize: 10 },
+                                grid: { color: 'rgba(102, 118, 141, 0.12)' }
+                            },
+                            x: {
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (hasExamData && distributionValues.some(value => value > 0)) {
+                new Chart(document.getElementById('distributionChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: distributionLabels,
+                        datasets: [{
+                            data: distributionValues,
+                            backgroundColor: ['#df4d6a', '#f4a900', '#1aa7a1', '#1f7ae0'],
+                            borderColor: '#f3f7fb',
+                            borderWidth: 4
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (hasLoginData) {
+                new Chart(document.getElementById('loginTrendChart'), {
+                    type: 'line',
+                    data: {
+                        labels: loginTrendLabels,
+                        datasets: [{
+                            label: 'Student Logins',
+                            data: loginTrendValues,
+                            borderColor: '#1f7ae0',
+                            backgroundColor: 'rgba(31, 122, 224, 0.14)',
+                            fill: true,
+                            tension: 0.35,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#1f7ae0'
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { precision: 0 },
+                                grid: { color: 'rgba(102, 118, 141, 0.12)' }
+                            },
+                            x: {
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+    <script>
+        (function () {
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const enterPage = () => {
+                document.body.classList.add('page-ready');
+                document.body.classList.remove('page-exit');
+            };
+            window.transitionTo = function (url) {
+                if (!url) return;
+                if (reduceMotion) { window.location.href = url; return; }
+                document.body.classList.remove('page-ready');
+                document.body.classList.add('page-exit');
+                setTimeout(() => { window.location.href = url; }, 220);
+            };
+            document.addEventListener('click', (event) => {
+                const link = event.target.closest('a[href]');
+                if (!link) return;
+                const href = link.getAttribute('href') || '';
+                if (!href || href.startsWith('#') || link.target === '_blank' || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                const absoluteUrl = new URL(link.href, window.location.href);
+                if (absoluteUrl.origin !== window.location.origin) return;
+                event.preventDefault();
+                transitionTo(absoluteUrl.href);
+            });
+            window.addEventListener('pageshow', enterPage);
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', enterPage);
+            else enterPage();
+        })();
+    </script>
+</body>
+</html>

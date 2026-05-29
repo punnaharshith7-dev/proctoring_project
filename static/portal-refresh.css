@@ -1,0 +1,719 @@
+:root {
+    --portal-primary: #1f7ae0;
+    --portal-accent: #18a7a0;
+    --portal-gold: #f2a531;
+    --portal-danger: #df4d6a;
+    --portal-ink: #11233a;
+    --portal-muted: #66768d;
+    --portal-panel: rgba(255, 255, 255, 0.86);
+    --portal-panel-strong: rgba(255, 255, 255, 0.94);
+    --portal-border: rgba(122, 147, 178, 0.22);
+    --portal-shadow: 0 24px 60px rgba(15, 32, 56, 0.16);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(31, 122, 224, 0.36) transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: rgba(31, 122, 224, 0.36);
+    border-radius: 999px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+a,
+button,
+input,
+select {
+    transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease, background 0.24s ease, color 0.24s ease;
+}
+
+body.portal-auth-page,
+body.portal-student-page,
+body.portal-admin-page,
+body.portal-exam-page {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body.portal-auth-page *,
+body.portal-student-page *,
+body.portal-admin-page *,
+body.portal-exam-page * {
+    font-family: inherit;
+}
+
+body.portal-auth-page h1,
+body.portal-auth-page h2,
+body.portal-auth-page h3,
+body.portal-student-page h1,
+body.portal-student-page h2,
+body.portal-student-page h3,
+body.portal-admin-page h1,
+body.portal-admin-page h2,
+body.portal-admin-page h3,
+body.portal-exam-page h1,
+body.portal-exam-page h2,
+body.portal-exam-page h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.03em;
+}
+
+body.portal-auth-page {
+    position: relative;
+    overflow-x: hidden;
+    background:
+        radial-gradient(circle at 12% 18%, rgba(31, 122, 224, 0.25), transparent 25%),
+        radial-gradient(circle at 88% 12%, rgba(242, 165, 49, 0.2), transparent 18%),
+        radial-gradient(circle at 80% 82%, rgba(24, 167, 160, 0.18), transparent 24%),
+        linear-gradient(135deg, #071321 0%, #12304c 48%, #0a4f69 100%);
+}
+
+body.portal-auth-page::before {
+    content: "";
+    position: fixed;
+    inset: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 30px;
+    pointer-events: none;
+}
+
+body.portal-auth-page .login-shell,
+body.portal-auth-page .reg-card,
+body.portal-auth-page .reset-card {
+    position: relative;
+    z-index: 1;
+}
+
+body.portal-auth-page .login-shell {
+    gap: 24px;
+}
+
+body.portal-auth-page .brand-logo {
+    width: min(640px, 92vw);
+    filter: drop-shadow(0 18px 30px rgba(2, 7, 13, 0.3));
+}
+
+body.portal-auth-page .login-container,
+body.portal-auth-page .reg-card,
+body.portal-auth-page .reset-card {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(246, 250, 255, 0.9) 100%);
+    border: 1px solid var(--portal-border);
+    border-radius: 30px;
+    box-shadow: var(--portal-shadow);
+    backdrop-filter: blur(20px);
+}
+
+body.portal-auth-page .login-container::before,
+body.portal-auth-page .reg-card::before,
+body.portal-auth-page .reset-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--portal-primary), var(--portal-accent), var(--portal-gold));
+}
+
+body.portal-auth-page .login-container:hover,
+body.portal-auth-page .reg-card:hover,
+body.portal-auth-page .reset-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 32px 70px rgba(15, 32, 56, 0.2);
+}
+
+body.portal-auth-page h2 {
+    color: var(--portal-ink);
+    font-size: clamp(1.7rem, 3vw, 2rem);
+    margin-bottom: 18px;
+}
+
+body.portal-auth-page .icon {
+    font-size: 2.8rem;
+    margin-bottom: 14px;
+}
+
+body.portal-auth-page .tabs {
+    padding: 6px;
+    border: 1px solid rgba(17, 35, 58, 0.08);
+    background: rgba(17, 35, 58, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+body.portal-auth-page .tab-btn {
+    font-weight: 700;
+    color: #5d6a7c;
+}
+
+body.portal-auth-page .tab-btn.active {
+    background: linear-gradient(135deg, rgba(31, 122, 224, 0.14), rgba(24, 167, 160, 0.14));
+    color: #0f4f86;
+    box-shadow: none;
+}
+
+body.portal-auth-page input,
+body.portal-auth-page select {
+    border: 1px solid rgba(122, 147, 178, 0.22);
+    border-radius: 16px;
+    background: rgba(248, 251, 255, 0.9);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+body.portal-auth-page input:focus,
+body.portal-auth-page select:focus {
+    border-color: rgba(31, 122, 224, 0.55);
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 0 0 4px rgba(31, 122, 224, 0.12);
+}
+
+body.portal-auth-page form button,
+body.portal-auth-page .btn-reg,
+body.portal-auth-page .btn-reset {
+    border-radius: 18px;
+    background: linear-gradient(135deg, var(--portal-primary), var(--portal-accent));
+    box-shadow: 0 16px 28px rgba(31, 122, 224, 0.22);
+}
+
+body.portal-auth-page form button:hover,
+body.portal-auth-page .btn-reg:hover,
+body.portal-auth-page .btn-reset:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 36px rgba(31, 122, 224, 0.28);
+}
+
+body.portal-auth-page .theme-toggle {
+    background: rgba(255, 255, 255, 0.78);
+    color: #15365d;
+    border-color: rgba(21, 54, 93, 0.12);
+    font-weight: 700;
+}
+
+body.portal-auth-page .branch-section {
+    background: rgba(248, 251, 255, 0.82);
+    border: 1px solid rgba(122, 147, 178, 0.18);
+    border-radius: 18px;
+}
+
+body.portal-auth-page .branch-grid label,
+body.portal-auth-page .note,
+body.portal-auth-page p,
+body.portal-auth-page .login-link,
+body.portal-auth-page .back-link,
+body.portal-auth-page .suggest-link {
+    color: #5f6d7f;
+}
+
+body.portal-auth-page .login-link a,
+body.portal-auth-page .back-link,
+body.portal-auth-page .suggest-link,
+body.portal-auth-page a[style*='color: var(--link)'] {
+    color: #0f5ea8 !important;
+}
+
+body.portal-auth-page .meter-container {
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(17, 35, 58, 0.08);
+}
+
+html[data-theme='dark'] body.portal-auth-page {
+    background:
+        radial-gradient(circle at 10% 20%, rgba(67, 124, 231, 0.28), transparent 25%),
+        radial-gradient(circle at 86% 14%, rgba(242, 165, 49, 0.18), transparent 18%),
+        radial-gradient(circle at 82% 82%, rgba(24, 167, 160, 0.18), transparent 22%),
+        linear-gradient(135deg, #050b14 0%, #0b1d31 46%, #103c56 100%);
+}
+
+html[data-theme='dark'] body.portal-auth-page .login-container,
+html[data-theme='dark'] body.portal-auth-page .reg-card,
+html[data-theme='dark'] body.portal-auth-page .reset-card {
+    background: linear-gradient(180deg, rgba(11, 21, 34, 0.92) 0%, rgba(15, 28, 44, 0.88) 100%);
+    border-color: rgba(135, 160, 188, 0.18);
+}
+
+html[data-theme='dark'] body.portal-auth-page h2 {
+    color: #eef4ff;
+}
+
+html[data-theme='dark'] body.portal-auth-page p,
+html[data-theme='dark'] body.portal-auth-page .note,
+html[data-theme='dark'] body.portal-auth-page .branch-grid label,
+html[data-theme='dark'] body.portal-auth-page .login-link,
+html[data-theme='dark'] body.portal-auth-page .back-link,
+html[data-theme='dark'] body.portal-auth-page .suggest-link {
+    color: #a6b6c8;
+}
+
+html[data-theme='dark'] body.portal-auth-page .tabs {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.06);
+}
+
+html[data-theme='dark'] body.portal-auth-page .tab-btn {
+    color: #9fb1c6;
+}
+
+html[data-theme='dark'] body.portal-auth-page .tab-btn.active {
+    color: #8ad8ff;
+    background: linear-gradient(135deg, rgba(31, 122, 224, 0.18), rgba(24, 167, 160, 0.2));
+}
+
+html[data-theme='dark'] body.portal-auth-page input,
+html[data-theme='dark'] body.portal-auth-page select {
+    color: #eef4ff;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(135, 160, 188, 0.18);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+html[data-theme='dark'] body.portal-auth-page input:focus,
+html[data-theme='dark'] body.portal-auth-page select:focus {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme='dark'] body.portal-auth-page .theme-toggle {
+    color: #eef4ff;
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(135, 160, 188, 0.18);
+}
+
+body.portal-student-page {
+    background:
+        radial-gradient(circle at top left, rgba(31, 122, 224, 0.16), transparent 22%),
+        radial-gradient(circle at bottom right, rgba(24, 167, 160, 0.14), transparent 18%),
+        linear-gradient(180deg, #eff5fb 0%, #f7fbff 100%);
+}
+
+body.portal-student-page #side-nav {
+    position: fixed;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(9, 18, 34, 0.96) 0%, rgba(11, 31, 55, 0.96) 100%);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 18px 0 42px rgba(8, 18, 33, 0.22);
+}
+
+body.portal-student-page #side-nav::before {
+    content: "";
+    position: absolute;
+    top: -40px;
+    right: -60px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(31, 122, 224, 0.35) 0%, transparent 70%);
+}
+
+body.portal-student-page #content {
+    padding: 42px 44px 56px;
+}
+
+body.portal-student-page #content > h1 {
+    font-size: clamp(2.1rem, 4vw, 3rem);
+    color: #12253c;
+    margin-bottom: 8px;
+}
+
+body.portal-student-page .page-subtitle {
+    max-width: 760px;
+    line-height: 1.7;
+}
+
+body.portal-student-page .brand {
+    font-size: 1.7rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+}
+
+body.portal-student-page .nav-link,
+body.portal-student-page .profile-trigger,
+body.portal-student-page .theme-toggle,
+body.portal-student-page .logout-link {
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+body.portal-student-page .nav-link:hover,
+body.portal-student-page .profile-trigger:hover,
+body.portal-student-page .theme-toggle:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+body.portal-student-page .nav-link.active {
+    background: linear-gradient(135deg, rgba(31, 122, 224, 0.26), rgba(24, 167, 160, 0.18));
+}
+
+body.portal-student-page .panel,
+body.portal-student-page .stat-tile,
+body.portal-student-page .empty-state,
+body.portal-student-page .profile-modal-card {
+    background: rgba(255, 255, 255, 0.84);
+    border: 1px solid rgba(122, 147, 178, 0.18);
+    box-shadow: 0 22px 50px rgba(15, 32, 56, 0.1);
+    backdrop-filter: blur(16px);
+}
+
+body.portal-student-page .exam-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    border: 1px solid rgba(122, 147, 178, 0.18);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(245, 249, 255, 0.78) 100%);
+    box-shadow: 0 14px 28px rgba(15, 32, 56, 0.06);
+}
+
+body.portal-student-page .exam-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 6px;
+    background: linear-gradient(180deg, var(--portal-primary), var(--portal-accent));
+}
+
+body.portal-student-page .unlocked:hover {
+    transform: translateY(-4px);
+    border-color: rgba(31, 122, 224, 0.34);
+    box-shadow: 0 20px 34px rgba(31, 122, 224, 0.12);
+}
+
+body.portal-student-page .btn-start,
+body.portal-student-page .btn-primary {
+    background: linear-gradient(135deg, var(--portal-primary), var(--portal-accent));
+    border-radius: 16px;
+    box-shadow: 0 16px 28px rgba(31, 122, 224, 0.2);
+}
+
+body.portal-student-page .btn-secondary {
+    background: rgba(17, 35, 58, 0.08);
+    color: #15365d;
+}
+
+body.portal-student-page .lock-badge {
+    background: rgba(17, 35, 58, 0.07);
+    color: #6c7b8d;
+}
+
+body.portal-student-page .stat-tile {
+    position: relative;
+    overflow: hidden;
+}
+
+body.portal-student-page .stat-tile::after {
+    content: "";
+    position: absolute;
+    top: -36px;
+    right: -22px;
+    width: 108px;
+    height: 108px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(31, 122, 224, 0.16) 0%, transparent 72%);
+}
+
+body.portal-student-page .stat-value,
+body.portal-student-page .topic-score {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+body.portal-student-page .leaderboard-table,
+body.portal-student-page .attempt-table {
+    background: transparent;
+}
+
+body.portal-student-page .leaderboard-table th,
+body.portal-student-page .leaderboard-table td,
+body.portal-student-page .attempt-table th,
+body.portal-student-page .attempt-table td {
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+
+body.portal-student-page .rank-badge {
+    background: linear-gradient(135deg, rgba(31, 122, 224, 0.18), rgba(24, 167, 160, 0.2));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34);
+}
+
+body.portal-student-page .topic-card {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(244, 248, 255, 0.82));
+}
+
+body.portal-student-page #profile-modal {
+    backdrop-filter: blur(6px);
+}
+
+html[data-theme='dark'] body.portal-student-page {
+    background:
+        radial-gradient(circle at top left, rgba(31, 122, 224, 0.16), transparent 22%),
+        radial-gradient(circle at bottom right, rgba(24, 167, 160, 0.12), transparent 18%),
+        linear-gradient(180deg, #07111d 0%, #0b1726 100%);
+}
+
+html[data-theme='dark'] body.portal-student-page #content > h1 {
+    color: #eef4ff;
+}
+
+html[data-theme='dark'] body.portal-student-page .panel,
+html[data-theme='dark'] body.portal-student-page .stat-tile,
+html[data-theme='dark'] body.portal-student-page .empty-state,
+html[data-theme='dark'] body.portal-student-page .profile-modal-card,
+html[data-theme='dark'] body.portal-student-page .exam-card,
+html[data-theme='dark'] body.portal-student-page .topic-card {
+    background: rgba(14, 27, 42, 0.82);
+    border-color: rgba(135, 160, 188, 0.18);
+    box-shadow: 0 24px 50px rgba(2, 8, 16, 0.24);
+}
+
+html[data-theme='dark'] body.portal-student-page .btn-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: #eef4ff;
+}
+
+html[data-theme='dark'] body.portal-student-page .lock-badge {
+    background: rgba(255, 255, 255, 0.07);
+    color: #c6d0df;
+}
+
+body.portal-admin-page {
+    background:
+        radial-gradient(circle at 14% 10%, rgba(31, 122, 224, 0.18), transparent 24%),
+        radial-gradient(circle at 88% 10%, rgba(242, 165, 49, 0.14), transparent 18%),
+        radial-gradient(circle at 82% 84%, rgba(24, 167, 160, 0.12), transparent 20%),
+        linear-gradient(180deg, #eef4fa 0%, #f6f9fc 100%);
+}
+
+body.portal-admin-page #side-nav {
+    overflow: hidden;
+    background: linear-gradient(180deg, #081629 0%, #0e2440 62%, #091726 100%);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 18px 0 44px rgba(8, 22, 41, 0.22);
+}
+
+body.portal-admin-page #side-nav::after {
+    content: "";
+    position: absolute;
+    bottom: -54px;
+    left: -32px;
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(24, 167, 160, 0.24) 0%, transparent 72%);
+}
+
+body.portal-admin-page #content {
+    padding: 40px 38px 56px;
+}
+
+body.portal-admin-page .stat-card,
+body.portal-admin-page .panel {
+    background: rgba(255, 255, 255, 0.82);
+    border-color: rgba(122, 147, 178, 0.18);
+    box-shadow: 0 22px 48px rgba(15, 32, 56, 0.1);
+}
+
+body.portal-admin-page .stat-card:hover,
+body.portal-admin-page .panel:hover {
+    transform: translateY(-2px);
+}
+
+body.portal-admin-page .nav-link,
+body.portal-admin-page .logout-link {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+body.portal-admin-page .page-title {
+    font-size: clamp(2.3rem, 4vw, 3.1rem);
+}
+
+body.portal-admin-page .panel table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+body.portal-admin-page .panel th,
+body.portal-admin-page .panel td {
+    padding: 14px 12px;
+    border-bottom: 1px solid rgba(122, 147, 178, 0.18);
+    text-align: left;
+}
+
+body.portal-admin-page .panel th {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.78rem;
+    color: var(--portal-muted);
+}
+
+body.portal-admin-page .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+body.portal-admin-page .badge-info {
+    background: rgba(31, 122, 224, 0.12);
+    color: var(--portal-primary);
+}
+
+body.portal-admin-page .badge-success {
+    background: rgba(24, 167, 160, 0.12);
+    color: var(--portal-accent);
+}
+
+body.portal-admin-page .badge-danger {
+    background: rgba(223, 77, 106, 0.12);
+    color: var(--portal-danger);
+}
+
+body.portal-admin-page .student-pic {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    object-fit: cover;
+    box-shadow: 0 10px 20px rgba(15, 32, 56, 0.14);
+}
+
+body.portal-admin-page .btn-del,
+body.portal-admin-page .btn-clear {
+    border: none;
+    border-radius: 14px;
+    padding: 12px 16px;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--portal-primary), var(--portal-accent));
+    color: white;
+    box-shadow: 0 14px 24px rgba(31, 122, 224, 0.16);
+}
+
+body.portal-admin-page .danger-btn,
+body.portal-admin-page .btn-del {
+    background: linear-gradient(135deg, #e2667e, #d63c63);
+    box-shadow: 0 14px 24px rgba(214, 60, 99, 0.18);
+}
+
+body.portal-admin-page .search-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+body.portal-admin-page .search-row input {
+    flex: 1;
+    min-width: 220px;
+    border: 1px solid rgba(122, 147, 178, 0.22);
+    border-radius: 16px;
+    padding: 14px 16px;
+    background: rgba(248, 251, 255, 0.88);
+}
+
+body.portal-admin-page .muted-copy {
+    color: var(--portal-muted);
+    line-height: 1.7;
+    margin-bottom: 18px;
+}
+
+body.portal-exam-page {
+    background:
+        radial-gradient(circle at top left, rgba(31, 122, 224, 0.14), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(24, 167, 160, 0.12), transparent 20%),
+        linear-gradient(180deg, #eef4fb 0%, #f8fbfe 100%);
+}
+
+body.portal-exam-page #sidebar {
+    background: linear-gradient(180deg, #0a1830 0%, #10254a 100%);
+    box-shadow: 18px 0 38px rgba(10, 24, 48, 0.22);
+}
+
+body.portal-exam-page #top-nav {
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid rgba(122, 147, 178, 0.16);
+    backdrop-filter: blur(12px);
+}
+
+body.portal-exam-page #timer {
+    background: linear-gradient(135deg, rgba(242, 165, 49, 0.22), rgba(255, 235, 180, 0.7));
+    color: #7a4d00;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+body.portal-exam-page .panel,
+body.portal-exam-page .qcard,
+body.portal-exam-page .review,
+body.portal-exam-page .modal {
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(122, 147, 178, 0.16);
+    box-shadow: 0 20px 42px rgba(15, 32, 56, 0.1);
+    backdrop-filter: blur(14px);
+}
+
+body.portal-exam-page .section-title {
+    background: linear-gradient(135deg, #0d2240, #18436f);
+    box-shadow: 0 12px 26px rgba(13, 34, 64, 0.18);
+}
+
+body.portal-exam-page .chip {
+    background: linear-gradient(180deg, rgba(240, 247, 255, 0.95), rgba(232, 242, 255, 0.9));
+    border: 1px solid rgba(122, 147, 178, 0.14);
+}
+
+body.portal-exam-page .opt,
+body.portal-exam-page input[type=text] {
+    border: 1px solid rgba(122, 147, 178, 0.22);
+    border-radius: 16px;
+    background: rgba(248, 251, 255, 0.9);
+}
+
+body.portal-exam-page .opt:hover {
+    transform: translateX(2px);
+    border-color: rgba(31, 122, 224, 0.34);
+}
+
+body.portal-exam-page .primary {
+    background: linear-gradient(135deg, var(--portal-primary), var(--portal-accent));
+    color: white;
+    box-shadow: 0 16px 28px rgba(31, 122, 224, 0.2);
+}
+
+body.portal-exam-page .secondary {
+    background: rgba(17, 35, 58, 0.08);
+    color: #30445e;
+}
+
+body.portal-exam-page .score {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(244, 250, 248, 0.9));
+    box-shadow: 0 20px 42px rgba(24, 167, 160, 0.12);
+}
+
+body.portal-exam-page .review-item {
+    background: rgba(248, 251, 255, 0.74);
+}
+
+@media (max-width: 980px) {
+    body.portal-auth-page::before {
+        inset: 10px;
+        border-radius: 24px;
+    }
+
+    body.portal-auth-page .brand-logo {
+        width: min(520px, 94vw);
+    }
+
+    body.portal-student-page #content,
+    body.portal-admin-page #content {
+        padding: 28px 20px 40px;
+    }
+}

@@ -1,0 +1,929 @@
+Timestamp,Student ID,Violation
+2026-02-15 14:55:42,55,Multiple People Detected
+2026-02-15 14:55:44,55,Multiple People Detected
+2026-02-15 14:55:47,55,Multiple People Detected
+2026-02-15 14:55:47,55,Cell Phone Detected
+2026-02-15 14:55:50,55,Multiple People Detected
+2026-02-15 14:55:55,55,Cell Phone Detected
+2026-02-15 14:55:55,55,Cell Phone Detected
+2026-02-15 14:55:57,55,Cell Phone Detected
+2026-02-15 14:56:20,55,Tab Switch / Browser Leave
+2026-02-15 14:56:20,55,Tab Switch / Browser Leave
+2026-02-15 14:56:34,55,Tab Switch / Browser Leave
+2026-02-15 15:05:23,545,Harshith,Multiple People Detected
+2026-02-15 15:05:28,545,Harshith,Cell Phone Detected
+2026-02-15 15:05:28,545,Harshith,Cell Phone Detected
+2026-02-15 15:05:29,545,Harshith,Cell Phone Detected
+2026-02-15 15:05:33,545,Harshith,Laptop Detected
+2026-02-15 15:05:37,545,Harshith,Cell Phone Detected
+2026-02-15 15:05:37,545,Harshith,Cell Phone Detected
+2026-02-15 15:05:38,545,Harshith,Cell Phone Detected
+2026-02-15 15:05:38,545,Harshith,Cell Phone Detected
+2026-02-15 15:05:43,545,Harshith,Cell Phone Detected
+2026-02-15 15:05:48,545,Harshith,Tab Switch / Browser Leave
+2026-02-15 15:05:48,545,Harshith,Tab Switch / Browser Leave
+2026-02-15 15:05:48,545,Harshith,High Noise / Talking
+2026-02-15 15:05:49,545,Harshith,High Noise / Talking
+2026-02-15 15:05:49,545,Harshith,High Noise / Talking
+2026-02-15 15:05:49,545,Harshith,High Noise / Talking
+2026-02-15 15:05:49,545,Harshith,High Noise / Talking
+2026-02-15 15:05:49,545,Harshith,High Noise / Talking
+2026-02-15 15:05:49,545,Harshith,High Noise / Talking
+2026-02-15 15:05:51,545,Harshith,High Noise / Talking
+2026-02-15 15:05:51,545,Harshith,High Noise / Talking
+2026-02-15 15:05:51,545,Harshith,High Noise / Talking
+2026-02-15 15:05:54,545,Harshith,High Noise / Talking
+2026-02-15 15:05:54,545,Harshith,High Noise / Talking
+2026-02-15 15:05:54,545,Harshith,High Noise / Talking
+2026-02-15 15:05:54,545,Harshith,High Noise / Talking
+2026-02-15 15:05:54,545,Harshith,High Noise / Talking
+2026-02-15 15:05:54,545,Harshith,High Noise / Talking
+2026-02-15 15:05:54,545,Harshith,High Noise / Talking
+2026-02-15 15:05:55,545,Harshith,High Noise / Talking
+2026-02-15 15:05:55,545,Harshith,High Noise / Talking
+2026-02-15 15:05:55,545,Harshith,High Noise / Talking
+2026-02-15 15:05:55,545,Harshith,High Noise / Talking
+2026-02-15 15:05:55,545,Harshith,High Noise / Talking
+2026-02-15 15:05:55,545,Harshith,High Noise / Talking
+2026-02-15 15:05:55,545,Harshith,High Noise / Talking
+2026-02-15 15:05:55,545,Harshith,High Noise / Talking
+2026-02-15 15:09:53,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:09:54,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:09:59,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:10:05,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:10:11,24261A0545,Harshith,No Face Detected
+2026-02-15 15:10:16,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:10:17,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:10:20,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 15:10:20,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 15:10:30,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 15:13:24,24261A0545,hahsy,Tab Switch / Browser Leave
+2026-02-15 15:13:24,24261A0545,hahsy,Tab Switch / Browser Leave
+2026-02-15 15:13:28,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:28,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:29,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:30,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:30,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:30,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:30,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:30,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:30,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:31,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:31,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:31,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:32,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:32,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:32,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:33,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:33,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:33,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:33,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:34,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:34,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:34,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:39,24261A0545,hahsy,Cell Phone Detected
+2026-02-15 15:13:43,24261A0545,hahsy,Tab Switch / Browser Leave
+2026-02-15 15:13:43,24261A0545,hahsy,Tab Switch / Browser Leave
+2026-02-15 15:13:51,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:13:53,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:13:53,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:13:54,24261A0545,hahsy,Cell Phone Detected
+2026-02-15 15:13:58,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:58,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:59,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:59,24261A0545,hahsy,Talking Detected
+2026-02-15 15:13:59,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:00,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:00,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:00,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:00,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:00,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:01,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:02,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:03,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:04,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:05,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:06,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:07,24261A0545,hahsy,Cell Phone Detected
+2026-02-15 15:14:07,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:08,24261A0545,hahsy,Cell Phone Detected
+2026-02-15 15:14:08,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:09,24261A0545,hahsy,Cell Phone Detected
+2026-02-15 15:14:10,24261A0545,hahsy,Cell Phone Detected
+2026-02-15 15:14:13,24261A0545,hahsy,Tab Switch / Browser Leave
+2026-02-15 15:14:13,24261A0545,hahsy,Tab Switch / Browser Leave
+2026-02-15 15:14:15,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:15,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:15,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:16,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:16,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:17,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:18,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:19,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:19,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:19,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:20,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:21,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:23,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:23,24261A0545,hahsy,Cell Phone Detected
+2026-02-15 15:14:23,24261A0545,hahsy,Multiple People Detected
+2026-02-15 15:14:26,24261A0545,hahsy,Cell Phone Detected
+2026-02-15 15:14:27,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:27,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:27,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:28,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:28,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:28,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:29,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:29,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:33,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:33,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:33,24261A0545,hahsy,Talking Detected
+2026-02-15 15:14:33,24261A0545,hahsy,Talking Detected
+15:17:23,24261A0545 - harshith,Noise/Talking Detected
+15:17:23,24261A0545 - harshith,Noise/Talking Detected
+15:17:29,24261A0545 - harshith,Cell Phone Detected
+15:17:31,24261A0545 - harshith,Noise/Talking Detected
+15:17:31,24261A0545 - harshith,Noise/Talking Detected
+15:17:31,24261A0545 - harshith,Noise/Talking Detected
+15:17:31,24261A0545 - harshith,Noise/Talking Detected
+15:17:31,24261A0545 - harshith,Noise/Talking Detected
+15:17:32,24261A0545 - harshith,Noise/Talking Detected
+15:17:32,24261A0545 - harshith,Noise/Talking Detected
+15:17:32,24261A0545 - harshith,Noise/Talking Detected
+15:17:36,24261A0545 - harshith,Noise/Talking Detected
+15:17:36,24261A0545 - harshith,Noise/Talking Detected
+15:17:36,24261A0545 - harshith,Tab/Window Switch
+15:17:36,24261A0545 - harshith,Noise/Talking Detected
+15:17:36,24261A0545 - harshith,Noise/Talking Detected
+15:17:36,24261A0545 - harshith,Noise/Talking Detected
+15:17:38,24261A0545 - harshith,Noise/Talking Detected
+15:17:38,24261A0545 - harshith,Noise/Talking Detected
+15:17:38,24261A0545 - harshith,Noise/Talking Detected
+15:17:39,24261A0545 - harshith,Noise/Talking Detected
+15:17:39,24261A0545 - harshith,Noise/Talking Detected
+15:17:39,24261A0545 - harshith,Noise/Talking Detected
+15:17:39,24261A0545 - harshith,Noise/Talking Detected
+15:17:39,24261A0545 - harshith,Noise/Talking Detected
+15:17:39,24261A0545 - harshith,Noise/Talking Detected
+15:17:39,24261A0545 - harshith,Noise/Talking Detected
+15:17:39,24261A0545 - harshith,Noise/Talking Detected
+15:17:39,24261A0545 - harshith,Noise/Talking Detected
+15:17:40,24261A0545 - harshith,Noise/Talking Detected
+15:17:40,24261A0545 - harshith,Noise/Talking Detected
+15:17:55,24261A0545 - harshith,Multiple People Detected
+15:17:55,24261A0545 - harshith,Noise/Talking Detected
+15:17:56,24261A0545 - harshith,Noise/Talking Detected
+15:17:56,24261A0545 - harshith,Noise/Talking Detected
+15:17:56,24261A0545 - harshith,Noise/Talking Detected
+15:17:56,24261A0545 - harshith,Noise/Talking Detected
+15:17:56,24261A0545 - harshith,Noise/Talking Detected
+15:17:58,24261A0545 - harshith,Noise/Talking Detected
+15:17:58,24261A0545 - harshith,Noise/Talking Detected
+15:17:58,24261A0545 - harshith,Noise/Talking Detected
+15:17:58,24261A0545 - harshith,Noise/Talking Detected
+15:17:58,24261A0545 - harshith,Noise/Talking Detected
+15:17:58,24261A0545 - harshith,Noise/Talking Detected
+15:17:58,24261A0545 - harshith,Noise/Talking Detected
+15:17:58,24261A0545 - harshith,Noise/Talking Detected
+15:18:02,24261A0545 - harshith,Multiple People Detected
+15:18:03,24261A0545 - harshith,Multiple People Detected
+15:18:04,24261A0545 - harshith,Noise/Talking Detected
+15:18:04,24261A0545 - harshith,Noise/Talking Detected
+15:18:04,24261A0545 - harshith,Noise/Talking Detected
+15:18:04,24261A0545 - harshith,Noise/Talking Detected
+15:18:09,24261A0545 - harshith,Noise/Talking Detected
+15:18:09,24261A0545 - harshith,Noise/Talking Detected
+15:18:09,24261A0545 - harshith,Noise/Talking Detected
+15:18:09,24261A0545 - harshith,Noise/Talking Detected
+15:18:09,24261A0545 - harshith,Noise/Talking Detected
+15:18:10,24261A0545 - harshith,Noise/Talking Detected
+15:18:10,24261A0545 - harshith,Noise/Talking Detected
+15:18:10,24261A0545 - harshith,Noise/Talking Detected
+15:18:10,24261A0545 - harshith,Noise/Talking Detected
+15:18:10,24261A0545 - harshith,Noise/Talking Detected
+15:18:11,24261A0545 - harshith,Noise/Talking Detected
+15:18:11,24261A0545 - harshith,Noise/Talking Detected
+15:18:11,24261A0545 - harshith,Noise/Talking Detected
+2026-02-15 15:19:14,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:14,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:14,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:14,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:14,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:14,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:15,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:15,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:15,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:16,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:16,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:16,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:16,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:16,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:16,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:17,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:17,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:17,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:17,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:18,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:18,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:18,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:19,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:19,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:19,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:20,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:21,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:19:21,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:22,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:19:22,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:19:22,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:28,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:19:29,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:19:30,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:19:31,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:19:32,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:19:33,24261A0545,Harshith,Laptop Detected
+2026-02-15 15:19:33,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:19:34,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:19:35,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:19:37,24261A0545,Harshith,Laptop Detected
+2026-02-15 15:19:38,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:38,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:39,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:39,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:39,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:40,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:40,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:40,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:41,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:41,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:41,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:41,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:43,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:43,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:19:44,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:19:47,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 15:19:47,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 15:19:55,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:55,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:55,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:56,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:56,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:56,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:56,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:58,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:58,24261A0545,Harshith,Talking Detected
+2026-02-15 15:19:59,24261A0545,Harshith,Talking Detected
+2026-02-15 15:20:00,24261A0545,Harshith,Talking Detected
+2026-02-15 15:20:00,24261A0545,Harshith,Talking Detected
+2026-02-15 15:20:04,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 15:25:56,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:25:57,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:25:57,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:25:57,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:25:59,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:25:59,24261A0545,Harshith,Tab Switch
+2026-02-15 15:25:59,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:25:59,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:25:59,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:25:59,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:25:59,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:25:59,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:00,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:00,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:07,24261A0545,Harshith,Tab Switch
+2026-02-15 15:26:17,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:17,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:17,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:17,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:18,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:18,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:20,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:20,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:20,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:21,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:21,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:21,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:21,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:21,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:21,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:22,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:23,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:24,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:24,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:24,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:24,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:24,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:25,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:25,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:26,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:26,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:26,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:26,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:26,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:27,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:27,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:27,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:26:27,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:28,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:28,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:28,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:26:28,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:28,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:29,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:30,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:30,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:30,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:30,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:31,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:31,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:31,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:32,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:32,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:32,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:32,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:32,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:33,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:33,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:33,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:34,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:34,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:34,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:34,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:35,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:35,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:35,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:36,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:36,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:36,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:37,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:37,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:38,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:38,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:38,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:39,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:39,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:39,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:39,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:41,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:41,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:41,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:41,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:41,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:41,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:42,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:26:42,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:42,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:42,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:42,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:47,24261A0545,Harshith,Tab Switch
+2026-02-15 15:26:54,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:54,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:54,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:58,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:58,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:26:58,24261A0545,Harshith,Talking/Sound Detected
+2026-02-15 15:27:02,24261A0545,Harshith,Tab Switch
+2026-02-15 15:27:03,24261A0545,Harshith,Tab Switch
+2026-02-15 15:27:44,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:44,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:44,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:45,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:45,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:45,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:45,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:46,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:46,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:46,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:47,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:47,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:47,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:48,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:48,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:54,24261A0545,harshith,Cell Phone Detected
+2026-02-15 15:27:55,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:55,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:55,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:56,24261A0545,harshith,Multiple People Detected
+2026-02-15 15:27:56,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:56,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:56,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:57,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:57,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:57,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:57,24261A0545,harshith,Cell Phone Detected
+2026-02-15 15:27:57,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:57,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:57,24261A0545,harshith,Talking Detected
+2026-02-15 15:27:57,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:00,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:00,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:00,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:04,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:04,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:04,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:05,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:05,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:05,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:05,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:06,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:06,24261A0545,harshith,Tab Switch / Browser Leave
+2026-02-15 15:28:06,24261A0545,harshith,Tab Switch / Browser Leave
+2026-02-15 15:28:06,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:06,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:06,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:06,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:06,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:07,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:07,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:07,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:07,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:08,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:08,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:08,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:09,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:10,24261A0545,harshith,Tab Switch / Browser Leave
+2026-02-15 15:28:14,24261A0545,harshith,Tab Switch / Browser Leave
+2026-02-15 15:28:19,24261A0545,harshith,Tab Switch / Browser Leave
+2026-02-15 15:28:19,24261A0545,harshith,Tab Switch / Browser Leave
+2026-02-15 15:28:23,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:23,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:23,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:24,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:24,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:24,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:24,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:25,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:25,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:25,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:26,24261A0545,harshith,Multiple People Detected
+2026-02-15 15:28:26,24261A0545,harshith,Talking Detected
+2026-02-15 15:28:26,24261A0545,harshith,Laptop Detected
+2026-02-15 15:28:28,24261A0545,harshith,Cell Phone Detected
+2026-02-15 15:28:28,24261A0545,harshith,No Face Detected
+2026-02-15 15:28:28,24261A0545,harshith,Cell Phone Detected
+2026-02-15 15:28:29,24261A0545,harshith,Cell Phone Detected
+2026-02-15 15:31:01,24261A0545,Punna Harshith,Cell Phone Detected
+2026-02-15 15:31:01,24261A0545,Punna Harshith,Cell Phone Detected
+2026-02-15 15:31:01,24261A0545,Punna Harshith,Cell Phone Detected
+2026-02-15 15:33:20,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:20,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:21,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:21,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:21,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:21,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:22,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:22,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:22,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:23,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:23,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:24,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:24,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:24,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:24,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:25,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:29,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:29,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:29,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:29,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:29,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:29,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:29,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:29,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:29,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:30,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:30,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:30,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:30,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:31,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:31,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:31,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:32,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:32,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:32,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:33,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:33,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:33,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:33,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:34,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:34,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:34,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:35,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:35,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:35,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:36,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:36,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:36,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:36,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:37,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:37,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:37,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:39,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:39,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:39,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:40,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:40,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:40,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:40,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:40,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:40,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:40,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:41,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:41,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:41,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:42,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:42,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:42,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:42,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:43,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:43,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:43,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:44,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:44,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:45,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:45,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:45,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:45,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:46,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:46,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:46,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:47,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:47,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:47,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:50,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:50,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:50,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:51,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:51,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:51,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:51,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:51,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:52,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:52,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:52,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:52,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:53,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:53,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:53,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:33:53,24261A0545,Punna Harshith,Sound/Talking Detected
+2026-02-15 15:36:13,24261A0545,hha,Tab Switch / Browser Leave
+2026-02-15 15:36:16,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:16,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:17,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:17,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:17,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:18,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:18,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:18,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:19,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:19,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:23,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:23,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:23,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:23,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:25,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:25,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:25,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:25,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:25,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:26,24261A0545,hha,Cell Phone Detected
+2026-02-15 15:36:27,24261A0545,hha,Cell Phone Detected
+2026-02-15 15:36:33,24261A0545,hha,Tab Switch / Browser Leave
+2026-02-15 15:36:37,24261A0545,hha,Tab Switch / Browser Leave
+2026-02-15 15:36:44,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:44,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:44,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:45,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:45,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:45,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:46,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:46,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:47,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:47,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:47,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:47,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:47,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:48,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:48,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:48,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:49,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:49,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:49,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:49,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:49,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:50,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:50,24261A0545,hha,Tab Switch / Browser Leave
+2026-02-15 15:36:50,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:50,24261A0545,hha,Sound/Talking Detected
+2026-02-15 15:36:58,24261A0545,hha,Tab Switch / Browser Leave
+2026-02-15 15:37:03,24261A0545,hha,Tab Switch / Browser Leave
+2026-02-15 15:39:03,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:05,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:39:05,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:05,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:05,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:05,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:05,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:05,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:05,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:06,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:06,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:06,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:08,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:08,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:08,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:10,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:39:10,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:10,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:10,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:10,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:11,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:39:11,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:11,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:11,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:12,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:39:12,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:12,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:12,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:13,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:39:13,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:13,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:13,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:13,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:14,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:39:14,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:14,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:14,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:15,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:39:15,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:15,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:15,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:17,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:39:17,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:17,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:17,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:17,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:18,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:39:18,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:18,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:18,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:20,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:39:20,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:20,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:20,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:20,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:39:20,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:20,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:20,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:20,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:21,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:39:21,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:21,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:21,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:22,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:39:22,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:22,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:22,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:39:23,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:39:23,24261A0545,Harshith,Sound/Talking Detected
+2026-02-15 15:42:03,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:42:03,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:42:04,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:42:04,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:42:15,24261A0545,Harshith,No Face Detected
+2026-02-15 15:42:17,24261A0545,Harshith,No Face Detected
+2026-02-15 15:42:36,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 15:42:44,24261A0545,Harshith,Talking/Music Detected
+2026-02-15 15:42:47,24261A0545,Harshith,Talking/Music Detected
+2026-02-15 15:42:47,24261A0545,Harshith,Talking/Music Detected
+2026-02-15 15:42:47,24261A0545,Harshith,Talking/Music Detected
+2026-02-15 15:43:02,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:43:04,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:43:04,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:43:05,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:52:00,24261A0545,Harshith,Loud Noise Detected
+2026-02-15 15:52:02,24261A0545,Harshith,Loud Noise Detected
+2026-02-15 15:52:04,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:52:05,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:52:06,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:52:09,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 15:54:54,24261A0545,Harshith,Loud Noise Detected
+2026-02-15 15:54:56,24261A0545,Harshith,Loud Noise Detected
+2026-02-15 15:55:00,24261A0545,Harshith,Loud Noise Detected
+2026-02-15 15:55:04,24261A0545,Harshith,Loud Noise Detected
+2026-02-15 15:55:04,24261A0545,Harshith,Loud Noise Detected
+2026-02-15 15:55:05,24261A0545,Harshith,Loud Noise Detected
+2026-02-15 15:55:05,24261A0545,Harshith,Loud Noise Detected
+2026-02-15 15:55:05,24261A0545,Harshith,Loud Noise Detected
+2026-02-15 15:55:06,24261A0545,Harshith,Loud Noise Detected
+2026-02-15 15:55:06,24261A0545,Harshith,Loud Noise Detected
+2026-02-15 15:55:07,24261A0545,Harshith,Loud Noise Detected
+2026-02-15 15:55:07,24261A0545,Harshith,Loud Noise Detected
+2026-02-15 15:55:10,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:55:14,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:55:18,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:55:22,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:55:25,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:55:27,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:55:28,24261A0545,Harshith,Multiple People Detected
+2026-02-15 15:55:28,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 15:55:31,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 16:40:53,24261A0545,has,Multiple People Detected
+2026-02-15 16:40:54,24261A0545,has,Multiple People Detected
+2026-02-15 16:40:55,24261A0545,has,Multiple People Detected
+2026-02-15 16:41:03,24261A0545,has,Multiple People Detected
+2026-02-15 16:41:11,24261A0545,has,Multiple People Detected
+2026-02-15 16:41:12,24261A0545,has,Multiple People Detected
+2026-02-15 16:41:21,24261A0545,has,Tab Switch
+2026-02-15 16:43:12,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 16:43:14,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 16:43:17,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 16:43:20,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 16:43:20,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 16:43:30,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 16:43:42,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 16:46:36,24261A0545,Harshith,Multiple People Detected
+2026-02-15 16:47:14,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 16:47:34,24261A0545,Harshith,No Face Detected
+2026-02-15 16:47:35,24261A0545,Harshith,No Face Detected
+2026-02-15 16:47:36,24261A0545,Harshith,No Face Detected
+2026-02-15 16:47:37,24261A0545,Harshith,No Face Detected
+2026-02-15 16:47:41,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 16:48:06,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 16:48:17,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 16:48:18,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 16:48:23,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 16:48:30,24261A0545,Harshith,Loud Noise
+2026-02-15 16:48:30,24261A0545,Harshith,Loud Noise
+2026-02-15 16:48:31,24261A0545,Harshith,Loud Noise
+2026-02-15 16:48:31,24261A0545,Harshith,Loud Noise
+2026-02-15 16:48:33,24261A0545,Harshith,Loud Noise
+2026-02-15 16:48:33,24261A0545,Harshith,Loud Noise
+2026-02-15 16:48:33,24261A0545,Harshith,Loud Noise
+2026-02-15 16:48:33,24261A0545,Harshith,Loud Noise
+2026-02-15 16:48:33,24261A0545,Harshith,Loud Noise
+2026-02-15 16:48:34,24261A0545,Harshith,Loud Noise
+2026-02-15 16:48:34,24261A0545,Harshith,Loud Noise
+2026-02-15 16:48:34,24261A0545,Harshith,Loud Noise
+2026-02-15 16:48:43,24261A0545,Harshith,Multiple People Detected
+2026-02-15 16:48:47,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 16:48:57,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 16:49:07,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 16:49:07,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 16:51:22,24261A0545,P. Harshith,Multiple People Detected
+2026-02-15 16:51:24,24261A0545,P. Harshith,Multiple People Detected
+2026-02-15 16:51:25,24261A0545,P. Harshith,Multiple People Detected
+2026-02-15 16:51:25,24261A0545,P. Harshith,Multiple People Detected
+2026-02-15 16:51:26,24261A0545,P. Harshith,Multiple People Detected
+2026-02-15 16:51:28,24261A0545,P. Harshith,Multiple People Detected
+2026-02-15 16:51:29,24261A0545,P. Harshith,Multiple People Detected
+2026-02-15 16:51:30,24261A0545,P. Harshith,Multiple People Detected
+2026-02-15 16:51:33,24261A0545,P. Harshith,Multiple People Detected
+2026-02-15 16:51:53,24261A0545,P. Harshith,No Face Detected
+2026-02-15 16:52:06,24261A0545,P. Harshith,Multiple People Detected
+2026-02-15 16:52:07,24261A0545,P. Harshith,Multiple People Detected
+2026-02-15 16:52:09,24261A0545,P. Harshith,Multiple People Detected
+2026-02-15 16:52:09,24261A0545,P. Harshith,Cell Phone Detected
+2026-02-15 16:52:10,24261A0545,P. Harshith,Multiple People Detected
+2026-02-15 16:52:15,24261A0545,P. Harshith,Multiple People Detected
+2026-02-15 16:53:41,24261A0545,jyj,Tab Switch / Browser Leave
+2026-02-15 16:53:59,24261A0545,jyj,Tab Switch / Browser Leave
+2026-02-15 16:54:07,24261A0545,jyj,Tab Switch / Browser Leave
+2026-02-15 16:55:16,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 16:55:30,24261A0545,Harshith,Multiple People Detected
+2026-02-15 16:55:33,24261A0545,Harshith,Multiple People Detected
+2026-02-15 16:55:40,24261A0545,Harshith,Multiple People Detected
+2026-02-15 16:55:43,24261A0545,Harshith,Multiple People Detected
+2026-02-15 16:55:51,24261A0545,Harshith,Multiple People Detected
+2026-02-15 16:55:56,24261A0545,Harshith,Multiple People Detected
+2026-02-15 16:56:00,24261A0545,Harshith,Multiple People Detected
+2026-02-15 16:56:04,24261A0545,Harshith,Multiple People Detected
+2026-02-15 16:57:00,24261A0545,Harshith,Multiple People Detected
+2026-02-15 16:57:01,24261A0545,Harshith,Multiple People Detected
+2026-02-15 16:57:25,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 16:57:31,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 16:58:07,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 16:58:19,24261A0545,Harshith,Multiple People Detected
+2026-02-15 16:58:19,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 16:58:28,24261A0545,Harshith,No Face Detected
+2026-02-15 16:58:28,24261A0545,Harshith,No Face Detected
+2026-02-15 16:58:29,24261A0545,Harshith,No Face Detected
+2026-02-15 16:58:33,24261A0545,Harshith,No Face Detected
+2026-02-15 16:58:35,24261A0545,Harshith,No Face Detected
+2026-02-15 17:02:30,24261A0545,Harshith,No Face Detected
+2026-02-15 17:02:39,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 17:02:56,24261A0545,Harshith,Multiple People Detected
+2026-02-15 17:03:03,24261A0545,Harshith,Multiple People Detected
+2026-02-15 17:03:03,24261A0545,Harshith,No Face Detected
+2026-02-15 17:03:03,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 17:03:19,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 17:10:09,24261A0545,Hatr,Tab Switch / Browser Leave
+2026-02-15 17:10:41,24261A0545,Hatr,Cell Phone Detected
+2026-02-15 17:10:42,24261A0545,Hatr,Multiple People Detected
+2026-02-15 17:10:52,24261A0545,Hatr,Cell Phone Detected
+2026-02-15 17:11:04,24261A0545,Hatr,No Face Detected
+2026-02-15 17:11:05,24261A0545,Hatr,No Face Detected
+2026-02-15 17:11:06,24261A0545,Hatr,No Face Detected
+2026-02-15 17:11:07,24261A0545,Hatr,No Face Detected
+2026-02-15 17:49:01,24261A0501,ha,No Face Detected
+2026-02-15 17:49:01,24261A0501,ha,No Face Detected
+2026-02-15 17:49:07,24261A0501,ha,Cell Phone Detected
+2026-02-15 17:49:16,24261A0501,ha,No Face Detected
+2026-02-15 17:49:18,24261A0501,ha,Tab Switch / Browser Leave
+2026-02-15 18:37:42,24261A0545,Harshith,No Face Detected
+2026-02-15 18:37:46,24261A0545,Harshith,Forbidden Object
+2026-02-15 18:38:49,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 18:38:56,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 18:39:01,24261A0545,Harshith,Multiple People Detected
+2026-02-15 18:39:06,24261A0545,Harshith,No Face Detected
+2026-02-15 18:39:09,24261A0545,Harshith,Multiple People Detected
+2026-02-15 18:39:10,24261A0545,Harshith,No Face Detected
+2026-02-15 18:39:11,24261A0545,Harshith,Multiple People Detected
+2026-02-15 18:39:12,24261A0545,Harshith,No Face Detected
+2026-02-15 18:39:18,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-15 18:39:30,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 18:45:50,24261A0545,Harshith,Loud Noise
+2026-02-15 18:45:50,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 18:45:54,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 18:45:55,24261A0545,Harshith,Loud Noise
+2026-02-15 18:45:56,24261A0545,Harshith,Multiple People Detected
+2026-02-15 18:46:01,24261A0545,Harshith,Multiple People Detected
+2026-02-15 18:46:01,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 18:46:02,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 18:46:02,24261A0545,Harshith,Loud Noise
+2026-02-15 18:46:06,24261A0545,Harshith,Multiple People Detected
+2026-02-15 18:46:07,24261A0545,Harshith,Multiple People Detected
+2026-02-15 18:46:10,24261A0545,Harshith,No Face Detected
+2026-02-15 18:46:12,24261A0545,Harshith,No Face Detected
+2026-02-15 18:46:18,24261A0545,Harshith,Cell Phone Detected
+2026-02-15 18:46:18,24261A0545,Harshith,Loud Noise
+2026-02-15 18:46:18,24261A0545,Harshith,Multiple People Detected
+2026-02-15 22:49:32,24261A0545,Harshith,Loud Noise
+2026-02-15 22:49:37,24261A0545,Harshith,Loud Noise
+2026-02-15 22:49:39,24261A0545,Harshith,No Face Detected
+2026-02-15 22:49:40,24261A0545,Harshith,No Face Detected
+2026-02-15 22:49:41,24261A0545,Harshith,No Face Detected
+2026-02-15 22:49:42,24261A0545,Harshith,No Face Detected
+2026-02-15 22:49:45,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-16 12:47:11,24261A0545,Harshith,Loud Noise
+2026-02-16 12:47:15,24261A0545,Harshith,Multiple People Detected
+2026-02-16 12:47:17,24261A0545,Harshith,Loud Noise
+2026-02-16 12:47:22,24261A0545,Harshith,Loud Noise
+2026-02-16 12:47:24,24261A0545,Harshith,Tab Switch / Browser Leave
+2026-02-16 12:47:27,24261A0545,Harshith,Loud Noise
+2026-02-18 02:04:34,24261A0545,Harshith,Multiple People Detected
+2026-02-18 02:05:28,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:28,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:29,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:30,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:35,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:37,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:38,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:39,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:40,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:41,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:43,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:43,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:44,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:45,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:46,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:47,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:48,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:49,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:50,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:53,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:53,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:53,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:54,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:55,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:56,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:57,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:58,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:05:59,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:01,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:03,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:04,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:07,24261A0545,24261A05445,Multiple People Detected
+2026-02-18 02:06:11,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:12,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:13,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:14,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:15,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:20,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:20,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:21,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:22,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:23,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:24,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:33,24261A0545,24261A05445,Cell Phone Detected
+2026-02-18 02:06:37,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:38,24261A0545,24261A05445,Multiple People Detected
+2026-02-18 02:06:39,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:40,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:41,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:42,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:43,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:44,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:45,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:48,24261A0545,24261A05445,No Face Detected
+2026-02-18 02:06:52,24261A0545,24261A05445,Tab Switch / Browser Leave
+2026-02-18 02:07:05,24261A0545,24261A05445,No Face Detected

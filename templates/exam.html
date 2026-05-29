@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Secure Assessment</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='tilt-effects.css') }}">
+    <script src="{{ url_for('static', filename='tilt-effects.js') }}" defer></script>
+    <style>
+        :root {
+            --primary: #23a6d5;
+            --secondary: #23d5ab;
+            --accent: #f1c40f;
+            --danger: #e73c7e;
+            --bg: #f8faff;
+            --sidebar: #1a1a2e;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
+        body { background-color: var(--bg); display: flex; height: 100vh; overflow: hidden; }
+
+        /* --- Sidebar & UI --- */
+        #sidebar { width: 350px; background: var(--sidebar); color: white; display: flex; flex-direction: column; padding: 30px 20px; box-shadow: 10px 0 30px rgba(0,0,0,0.1); z-index: 10; }
+        #webcam-container { width: 100%; border-radius: 15px; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); position: relative; background: #000; }
+        video { width: 100%; transform: scaleX(-1); display: block; }
+        .meter-container { background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        #audio-level { height: 100%; width: 0%; background: linear-gradient(to right, var(--secondary), var(--primary)); transition: width 0.05s; }
+        #status-log { margin-top: 30px; flex-grow: 1; overflow-y: auto; }
+        .alert-item { background: rgba(231, 60, 126, 0.1); border-left: 4px solid var(--danger); padding: 12px; border-radius: 8px; margin-bottom: 12px; font-size: 0.8rem; }
+
+        /* --- Main Content --- */
+        #main-wrapper { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+        #top-nav { padding: 20px 40px; background: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 15px rgba(0,0,0,0.03); }
+        #timer { font-size: 1.4rem; font-weight: 600; background: var(--accent); padding: 5px 20px; border-radius: 10px; }
+        #exam-paper { padding: 40px; overflow-y: auto; flex-grow: 1; width: 100%; max-width: 900px; margin: 0 auto; }
+        .section-header { background: var(--sidebar); color: white; padding: 12px 25px; border-radius: 12px; margin: 40px 0 20px 0; font-weight: 600; }
+        .question-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.02); margin-bottom: 30px; border: 1px solid #edf2f7; }
+        .mcq-option { display: block; margin: 12px 0; cursor: pointer; padding: 12px; border: 1px solid #eee; border-radius: 12px; transition: 0.2s; }
+        .mcq-option:hover { background: #f9f9f9; border-color: var(--primary); }
+        .ans-key { display: none; margin-top: 15px; padding: 10px; background: #e0ffe0; color: #23d5ab; border-radius: 8px; font-weight: 600; font-size: 0.85rem; }
+
+        /* --- Result Analysis --- */
+        #result-screen { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 3000; overflow-y: auto; padding: 50px; flex-direction: column; align-items: center; }
+        .score-circle { width: 200px; height: 200px; border-radius: 50%; border: 10px solid var(--secondary); display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 30px; background: white; }
+        .analysis-card { background: white; padding: 30px; border-radius: 20px; width: 100%; max-width: 800px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); color: var(--sidebar); text-align: left; }
+        .summary-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+
+        /* --- SECURITY ALERT CSS --- */
+        .full-overlay { display: none; position: fixed; inset: 0; background: rgba(26, 26, 46, 0.98); backdrop-filter: blur(15px); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 40px; }
+        .modal-card { background: white; color: var(--sidebar); padding: 40px; border-radius: 25px; width: 100%; max-width: 500px; }
+        .btn-confirm { background: var(--secondary); color: white; padding: 12px 30px; border: none; border-radius: 10px; cursor: pointer; margin: 10px; font-weight: 600; }
+        .btn-cancel { background: #dfe6e9; color: #636e72; padding: 12px 30px; border: none; border-radius: 10px; cursor: pointer; margin: 10px; }
+        
+        .device-alert { position: fixed; inset: 0; background: rgba(231, 60, 126, 0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; animation: pulse 0.4s infinite; }
+        @keyframes pulse { 0% { opacity: 0.9; } 50% { opacity: 1; } 100% { opacity: 0.9; } }
+    </style>
+</head>
+<body onclick="startAudio()">
+
+    <div id="permission-shield" style="position:fixed; inset:0; background:var(--sidebar); z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; color:white;">
+        <h1>🛡️ Hardware Security Check</h1>
+        <p style="margin: 20px 0; color: #aaa;">Enable Camera & Mic to start your Group {{ year_group }} Assessment.</p>
+        <button onclick="initMedia()" class="btn-confirm" style="background:var(--primary); padding:20px 50px;">Start Session</button>
+    </div>
+
+    <div id="sidebar" style="visibility: hidden;">
+        <div class="proctor-header" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 10px;"><span style="color: red;">●</span> Live AI Monitoring</div>
+        <div id="webcam-container"><video id="webcam" autoplay playsinline muted></video></div>
+        <div class="meter-box" style="margin-top: 20px;">
+            <span class="meter-label" style="font-size: 0.7rem; color: #aaa; display: block;">ENVIRONMENTAL AUDIO</span>
+            <div class="meter-container"><div id="audio-level"></div></div>
+        </div>
+        <div id="status-log"></div>
+    </div>
+
+    <div id="main-wrapper">
+        <nav id="top-nav">
+            <div class="student-pill"><strong>Student:</strong> {{ student_name }} | <strong>ID:</strong> {{ student_id }}</div>
+            <div id="timer">60:00</div>
+        </nav>
+        <div id="exam-paper">
+            <div id="questions-container"></div>
+            <button class="btn-confirm" style="width: 100%; padding: 20px; margin-top: 20px;" onclick="confirmSubmit()">FINISH ASSESSMENT</button>
+        </div>
+    </div>
+
+    <div id="submit-modal" class="full-overlay">
+        <div class="modal-card">
+            <h2>Confirm Submission</h2>
+            <p style="margin: 20px 0; color: #666;">Are you sure? Your answers will be graded immediately.</p>
+            <button class="btn-confirm" onclick="finalProcess()">Yes, Submit</button>
+            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h1 style="margin-bottom: 10px; color: var(--sidebar);">Exam Completed!</h1>
+        <div class="score-circle">
+            <h1 id="final-score" style="font-size: 3rem; color: var(--secondary);">0</h1>
+            <span style="font-weight: 600; color: var(--sidebar);">/ 50</span>
+        </div>
+        
+        <div class="analysis-card">
+            <h3 style="margin-bottom: 20px;">Section-wise Performance Analysis</h3>
+            <div class="summary-item"><span>Section A (Fundamentals)</span><strong id="sec1-res">0 / 10</strong></div>
+            <div class="summary-item"><span>Section B (Analytical)</span><strong id="sec2-res">0 / 20</strong></div>
+            <div class="summary-item" style="border: none;"><span>Section C (Professional)</span><strong id="sec3-res">0 / 20</strong></div>
+            
+            <button class="btn-confirm" style="margin-top: 30px; width: 100%;" onclick="viewAnalysis()">View Analysis (Check Answers)</button>
+            <button class="btn-confirm" style="margin-top: 10px; width: 100%; background: #636e72;" onclick="window.location.href='/logout'">Exit Portal</button>
+        </div>
+    </div>
+
+    <script>
+        const socket = window.io ? io() : {
+            emit() {},
+            on() {},
+            disconnect() {}
+        };
+        const studentInfo = "{{ student_id }} - {{ student_name }}";
+        const video = document.getElementById('webcam');
+        const log = document.getElementById('status-log');
+        const audioBar = document.getElementById('audio-level');
+        const timerDisplay = document.getElementById('timer');
+        let audioCtx, timeLeft = 60 * 60, timerStarted = false;
+        let correctAnswers = [];
+
+        // --- 1. ENHANCED RESTRICTED KEY/ACTION DETECTION ---
+        ['copy', 'paste', 'contextmenu'].forEach(evt => {
+            document.addEventListener(evt, (e) => {
+                e.preventDefault();
+                const reason = evt === 'contextmenu' ? "Right Click" : evt.charAt(0).toUpperCase() + evt.slice(1);
+                triggerVisualAlert(`🚫 Restricted Action Used (${reason})`);
+                socket.emit('tab_switch', { student_info: studentInfo, msg: `🚫 Restricted Action: ${reason}` });
+            });
+        });
+
+        document.onkeydown = (e) => {
+            if (e.ctrlKey && [67, 86, 85, 73, 83].includes(e.keyCode)) {
+                triggerVisualAlert("🚫 Restricted Key Used");
+                socket.emit('tab_switch', { student_info: studentInfo, msg: "🚫 Restricted Keys" });
+                return false;
+            }
+        };
+
+        function triggerVisualAlert(msg) {
+            addLog(msg);
+            const overlay = document.createElement('div');
+            overlay.className = "device-alert";
+            overlay.innerHTML = `<h1>🚨 SECURITY ALERT 🚨</h1><p>${msg}</p>`;
+            document.body.appendChild(overlay);
+            setTimeout(() => overlay.remove(), 1500);
+        }
+
+        // --- 2. EXAM GENERATION (50 MCQs: 10 + 20 + 20) ---
+        function generateExam() {
+            const container = document.getElementById('questions-container');
+            let html = ""; correctAnswers = [];
+            const sections = [
+                { title: "Section A: Fundamentals (10 Marks)", count: 10 },
+                { title: "Section B: Analytical (20 Marks)", count: 20 },
+                { title: "Section C: Professional (20 Marks)", count: 20 }
+            ];
+
+            sections.forEach((sec, sIdx) => {
+                html += `<div class="section-header">${sec.title}</div>`;
+                for(let i = 0; i < sec.count; i++) {
+                    let qIdx = correctAnswers.length;
+                    let qData = { 
+                        q: `Year {{ year_group }} - Sample MCQ Question ${qIdx+1}?`, 
+                        o: ["Option A", "Option B", "Option C", "Option D"], 
+                        a: "Option A" 
+                    };
+                    correctAnswers.push(qData.a);
+                    html += `
+                        <div class="question-card">
+                            <p><strong>Q${qIdx+1}:</strong> ${qData.q}</p>
+                            ${qData.o.map(opt => `<label class="mcq-option"><input type="radio" name="q${qIdx}" value="${opt}"> ${opt}</label>`).join('')}
+                            <div class="ans-key" id="ans-${qIdx}">✅ Correct Answer: ${qData.a}</div>
+                        </div>`;
+                }
+            });
+            container.innerHTML = html;
+        }
+
+        function confirmSubmit() { document.getElementById('submit-modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('submit-modal').style.display = 'none'; }
+
+        // --- 3. FINAL GRADING & SECTION-WISE MARKS ---
+        function finalProcess() {
+            let secScores = [0, 0, 0];
+            document.querySelectorAll('input[type="radio"]:checked').forEach(rb => {
+                let idx = parseInt(rb.name.substring(1));
+                if(rb.value === correctAnswers[idx]) {
+                    if(idx < 10) secScores[0]++;
+                    else if(idx < 30) secScores[1]++;
+                    else secScores[2]++;
+                }
+            });
+
+            const total = secScores.reduce((a,b) => a+b, 0);
+            document.getElementById('submit-modal').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'flex';
+            document.getElementById('final-score').innerText = total;
+            document.getElementById('sec1-res').innerText = `${secScores[0]} / 10`;
+            document.getElementById('sec2-res').innerText = `${secScores[1]} / 20`;
+            document.getElementById('sec3-res').innerText = `${secScores[2]} / 20`;
+
+            // Sync with backend
+            fetch('/submit_exam', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ score: total, total: 50 })
+            });
+        }
+
+        function viewAnalysis() {
+            document.getElementById('result-screen').style.display = 'none';
+            document.querySelectorAll('.ans-key').forEach(el => el.style.display = 'block');
+            window.scrollTo(0,0);
+        }
+
+        // --- 4. CORE PROCTORING & HARDWARE ---
+        function startAudio() { if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); }
+
+        function initMedia() {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(stream => {
+                document.getElementById('permission-shield').style.display = 'none';
+                document.getElementById('main-wrapper').style.display = 'flex';
+                document.getElementById('sidebar').style.visibility = 'visible';
+                video.srcObject = stream;
+                setupAudio(stream);
+                startAI();
+                startTimer();
+                generateExam();
+            });
+        }
+
+        function setupAudio(stream) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioCtx.createMediaStreamSource(stream);
+            const analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 256; source.connect(analyser);
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            function renderFrame() {
+                analyser.getByteFrequencyData(dataArray);
+                let avg = dataArray.reduce((a,b) => a+b) / dataArray.length;
+                audioBar.style.width = Math.min(100, avg * 3.5) + "%";
+                if (avg > 50) socket.emit('audio_violation', { student_info: studentInfo });
+                requestAnimationFrame(renderFrame);
+            }
+            renderFrame();
+        }
+
+        function startAI() {
+            setInterval(() => {
+                if (!video.videoWidth) return;
+                const canvas = document.createElement('canvas');
+                canvas.width = 320; canvas.height = 240; 
+                canvas.getContext('2d').drawImage(video, 0, 0, 320, 240);
+                socket.emit('video_frame', { image: canvas.toDataURL('image/jpeg', 0.6), student_info: studentInfo });
+            }, 500); 
+        }
+
+        function startTimer() {
+            timerStarted = true;
+            setInterval(() => {
+                let m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+                timerDisplay.innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+                if (timeLeft-- <= 0) finalProcess();
+            }, 1000);
+        }
+
+        function addLog(msg) {
+            const item = document.createElement('div');
+            item.className = 'alert-item';
+            item.innerText = `⚠️ ${new Date().toLocaleTimeString()}: ${msg}`;
+            log.prepend(item);
+        }
+
+        window.onblur = () => { if (timerStarted) socket.emit('tab_switch', { student_info: studentInfo, msg: "Tab Switch / Window Minimized" }); };
+        socket.on('cheat_alert', d => d.alerts.forEach(a => { addLog(a); if(a.includes("phone")) triggerVisualAlert(a); }));
+    </script>
+</body>
+</html>
