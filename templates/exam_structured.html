@@ -613,6 +613,7 @@
         let persistInterval = null;
         let timerInterval = null;
         let lastAudioEmitAt = 0;
+        let lastTabSwitchEmitAt = 0;
         let latestEvidenceFrame = '';
         let faceVerified = false;
         let faceMatchScore = 0;
@@ -1227,14 +1228,26 @@
                 const canvas = document.createElement('canvas');
                 const sourceWidth = Math.max(1, video.videoWidth || 320);
                 const sourceHeight = Math.max(1, video.videoHeight || 240);
-                const targetWidth = Math.min(320, sourceWidth);
+                const targetWidth = Math.min(480, sourceWidth);
                 const targetHeight = Math.max(1, Math.round(sourceHeight * (targetWidth / sourceWidth)));
                 canvas.width = targetWidth;
                 canvas.height = targetHeight;
                 canvas.getContext('2d').drawImage(video, 0, 0, targetWidth, targetHeight);
-                latestEvidenceFrame = canvas.toDataURL('image/jpeg', 0.6);
+                latestEvidenceFrame = canvas.toDataURL('image/jpeg', 0.65);
             }
             return latestEvidenceFrame;
+        }
+
+        function emitTabSwitch(reason) {
+            if (!timerStarted || examSubmitted) return;
+            const now = Date.now();
+            if (now - lastTabSwitchEmitAt < 2000) return;
+            lastTabSwitchEmitAt = now;
+            socket.emit('tab_switch', {
+                student_info: studentInfo,
+                msg: reason,
+                evidence_image: getEvidenceFrame()
+            });
         }
 
         function setupAudio(stream) {
@@ -1276,7 +1289,6 @@
                     student_name: studentName,
                     year_group: yearGroup,
                     remaining_seconds: timeLeft,
-                    frame: getEvidenceFrame(),
                     mic_status: (parseFloat(audioBar.style.width) || 0) > 65 ? 'active' : 'normal',
                     face_verified: faceVerified,
                     face_match_score: faceMatchScore,
@@ -1334,23 +1346,28 @@
             showToast('Exam started', 'Mission control is live. Your answers will now save locally for reconnect recovery.', 'info');
         }
 
-        window.onblur = () => {
-            if (timerStarted && !examSubmitted) socket.emit('tab_switch', { student_info: studentInfo, msg: 'Tab Switch / Window Minimized', evidence_image: getEvidenceFrame() });
-        };
+        window.addEventListener('blur', () => emitTabSwitch('Tab Switch / Window Minimized'));
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) emitTabSwitch('Tab Switch / Page Hidden');
+        });
+        window.addEventListener('pagehide', () => emitTabSwitch('Tab Switch / Page Hidden'));
 
         ['mousemove', 'keydown', 'click', 'touchstart', 'scroll'].forEach(evt => document.addEventListener(evt, markActivity, { passive: true }));
         ['copy', 'paste', 'contextmenu'].forEach(evt => document.addEventListener(evt, e => {
             e.preventDefault();
+            e.stopPropagation();
             const reason = evt === 'contextmenu' ? 'Right Click' : evt.charAt(0).toUpperCase() + evt.slice(1);
             addLog(`Restricted action: ${reason}`);
             flashAlert(`Restricted action: ${reason}`);
-            socket.emit('tab_switch', { student_info: studentInfo, msg: `Restricted Action: ${reason}`, evidence_image: getEvidenceFrame() });
+            emitTabSwitch(`Restricted Action: ${reason}`);
         }));
         document.onkeydown = e => {
             if (e.ctrlKey && [67, 86, 85, 73, 83].includes(e.keyCode)) {
+                e.preventDefault();
+                e.stopPropagation();
                 addLog('Restricted key combination');
                 flashAlert('Restricted key combination');
-                socket.emit('tab_switch', { student_info: studentInfo, msg: 'Restricted Keys', evidence_image: getEvidenceFrame() });
+                emitTabSwitch('Restricted Keys');
                 return false;
             }
         };
@@ -1374,7 +1391,7 @@
                 updateTrustMeter(Number(alert.risk_score || 0), alert.risk_level || 'Low');
             }
             const lower = String(message).toLowerCase();
-            if (lower.includes('phone') || lower.includes('no face') || lower.includes('restricted') || lower.includes('loud noise') || lower.includes('multiple people')) flashAlert(message);
+            if (lower.includes('phone') || lower.includes('no face') || lower.includes('restricted') || lower.includes('loud noise') || lower.includes('multiple people') || lower.includes('tab switch') || lower.includes('afk')) flashAlert(message);
             if (Number(localViolationScore) > Number(threshold)) {
                 triggerAutoSubmit(threshold);
             }
