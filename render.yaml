@@ -1,9 +1,9 @@
 services:
   - type: web
     name: proctoring-project
-    env: python
+    runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn -k eventlet -w 1 wsgi:app --bind 0.0.0.0:$PORT
+    startCommand: python app.py
     autoDeploy: true
     healthCheckPath: /
