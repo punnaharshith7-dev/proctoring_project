@@ -668,8 +668,17 @@
             }
         }
 
+        function supportsFullscreen() {
+            const root = document.documentElement;
+            return !!(root.requestFullscreen || root.webkitRequestFullscreen || root.mozRequestFullScreen || root.msRequestFullscreen);
+        }
+
+        function isFullscreenActive() {
+            return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+        }
+
         function updateFullscreenStatus() {
-            const full = !!document.fullscreenElement;
+            const full = isFullscreenActive() || !supportsFullscreen();
             setChecklistStatus('check-fullscreen', full ? 'ok' : 'pending', full ? 'Enabled' : 'Pending');
         }
 
@@ -680,15 +689,20 @@
         }
 
         function readinessSatisfied() {
-            return !!(streamRef && video.videoWidth && navigator.onLine && document.fullscreenElement && faceVerified);
+            const fullscreenReady = isFullscreenActive() || !supportsFullscreen();
+            return !!(streamRef && video.videoWidth && navigator.onLine && fullscreenReady && faceVerified);
         }
 
         function enableFullscreen() {
             const root = document.documentElement;
-            if (!document.fullscreenElement && root.requestFullscreen) {
-                return root.requestFullscreen().catch(() => {
+            const request = root.requestFullscreen || root.webkitRequestFullscreen || root.mozRequestFullScreen || root.msRequestFullscreen;
+            if (!isFullscreenActive() && request) {
+                return Promise.resolve(request.call(root)).catch(() => {
                     showToast('Fullscreen required', 'Enable fullscreen mode before starting the secure exam.', 'warn');
                 });
+            }
+            if (!request) {
+                showToast('Fullscreen unavailable', 'This browser does not support fullscreen. Keep the exam tab open and focused.', 'warn');
             }
             updateFullscreenStatus();
             return Promise.resolve();
@@ -1386,7 +1400,7 @@
 
         window.addEventListener('online', updateNetworkStatus);
         window.addEventListener('offline', updateNetworkStatus);
-        document.addEventListener('fullscreenchange', updateFullscreenStatus);
+        ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(evt => document.addEventListener(evt, updateFullscreenStatus));
         window.addEventListener('beforeunload', () => {
             if (!examSubmitted) persistExamState();
         });
