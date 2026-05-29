@@ -19,7 +19,6 @@ from flask import Flask, render_template, request, session, redirect, url_for, j
 from flask_socketio import SocketIO, emit
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from ultralytics import YOLO
 from PIL import Image, ImageDraw, ImageFont
 from question_bank import (
     QUESTION_BANKS,
@@ -53,6 +52,7 @@ ADMIN_INITIAL_PASSWORD = os.environ.get("ADMIN_INITIAL_PASSWORD")
 RUN_HOST = os.environ.get("HOST", "0.0.0.0")
 RUN_PORT = int(os.environ.get("PORT", "5000"))
 RUN_DEBUG = os.environ.get("FLASK_DEBUG", "").strip().lower() in {"1", "true", "yes", "on"}
+DETECTION_FRAME_WIDTH = max(256, int(os.environ.get("DETECTION_FRAME_WIDTH", "320")))
 VIOLATION_AUTO_SUBMIT_SCORE = 20
 SECTION_ORDER = ["section_a", "section_b", "section_c"]
 SECTION_LABELS = {
@@ -698,8 +698,16 @@ init_db()
 
 def get_model():
     global YOLO_MODEL
+    if YOLO_MODEL is False:
+        return None
     if YOLO_MODEL is None:
-        YOLO_MODEL = YOLO('yolov8n.pt')
+        try:
+            from ultralytics import YOLO as UltralyticsYOLO
+            YOLO_MODEL = UltralyticsYOLO('yolov8n.pt')
+        except Exception as error:
+            app.logger.exception("YOLO model unavailable: %s", error)
+            YOLO_MODEL = False
+            return None
     return YOLO_MODEL
 
 
@@ -1939,40 +1947,47 @@ def handle_frame(data):
             app.logger.warning("Unable to decode video frame for student %s", sid)
             return
         h, w, _ = frame.shape
+        if w > DETECTION_FRAME_WIDTH:
+            scale = DETECTION_FRAME_WIDTH / float(w)
+            frame = cv2.resize(frame, (DETECTION_FRAME_WIDTH, max(1, int(h * scale))))
+        h, w, _ = frame.shape
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         face_detector = get_face_detector()
         faces = []
         if face_detector is not None and not face_detector.empty():
             faces = face_detector.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(50, 50))
         face_count = len(faces)
-        results = model(frame, verbose=False, conf=0.2, imgsz=640)[0]
+        results = None
+        if model is not None:
+            results = model(frame, verbose=False, conf=0.25, imgsz=min(416, DETECTION_FRAME_WIDTH), max_det=5)[0]
         alerts, people = [], 0
         current = ACTIVE_EXAMS.get(sid, {})
         now = datetime.now()
-        for box in results.boxes:
-            label = model.names[int(box.cls[0])]
-            if label == 'person': 
-                people += 1
-                x1, _, x2, _ = box.xyxy[0].tolist()
-                center_x = (x1 + x2) / 2
-                looking_key = None
-                if center_x < (w * 0.25):
-                    looking_key = "looking_left"
-                    alert_text = "Looking Away (Left)"
-                elif center_x > (w * 0.75):
-                    looking_key = "looking_right"
-                    alert_text = "Looking Away (Right)"
-                if looking_key:
-                    last_seen = parse_timestamp(current.get(f"{looking_key}_at"))
-                    if not last_seen or (now - last_seen).total_seconds() >= 4:
-                        alerts.append(alert_text)
-                        current[f"{looking_key}_at"] = now.strftime("%Y-%m-%d %H:%M:%S")
-            if label in FORBIDDEN_OBJECTS:
-                object_key = f"object_{label.replace(' ', '_')}_at"
-                last_seen = parse_timestamp(current.get(object_key))
-                if not last_seen or (now - last_seen).total_seconds() >= 5:
-                    alerts.append(f"Detected: {label}")
-                    current[object_key] = now.strftime("%Y-%m-%d %H:%M:%S")
+        if results is not None and getattr(results, "boxes", None) is not None:
+            for box in results.boxes:
+                label = model.names[int(box.cls[0])]
+                if label == 'person':
+                    people += 1
+                    x1, _, x2, _ = box.xyxy[0].tolist()
+                    center_x = (x1 + x2) / 2
+                    looking_key = None
+                    if center_x < (w * 0.25):
+                        looking_key = "looking_left"
+                        alert_text = "Looking Away (Left)"
+                    elif center_x > (w * 0.75):
+                        looking_key = "looking_right"
+                        alert_text = "Looking Away (Right)"
+                    if looking_key:
+                        last_seen = parse_timestamp(current.get(f"{looking_key}_at"))
+                        if not last_seen or (now - last_seen).total_seconds() >= 4:
+                            alerts.append(alert_text)
+                            current[f"{looking_key}_at"] = now.strftime("%Y-%m-%d %H:%M:%S")
+                if label in FORBIDDEN_OBJECTS:
+                    object_key = f"object_{label.replace(' ', '_')}_at"
+                    last_seen = parse_timestamp(current.get(object_key))
+                    if not last_seen or (now - last_seen).total_seconds() >= 5:
+                        alerts.append(f"Detected: {label}")
+                        current[object_key] = now.strftime("%Y-%m-%d %H:%M:%S")
         if people > 1 or face_count > 1:
             last_multiple = parse_timestamp(current.get("multiple_faces_at"))
             if not last_multiple or (now - last_multiple).total_seconds() >= 5:
