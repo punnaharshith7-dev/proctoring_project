@@ -1,6 +1,7 @@
 import eventlet
 eventlet.monkey_patch()
 
+import gc
 import sqlite3
 import shutil
 import base64
@@ -43,6 +44,7 @@ VIOLATION_PROOF_FOLDER = 'static/violation_proofs'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 FORBIDDEN_OBJECTS = ['cell phone', 'mobile phone', 'laptop', 'book', 'tablet']
 YOLO_MODEL = None 
+YOLO_MODEL_FAILED_AT = None
 FACE_CASCADE = None
 ACTIVE_EXAMS = {}
 ADMIN_SIDS = set()
@@ -53,6 +55,7 @@ RUN_HOST = os.environ.get("HOST", "0.0.0.0")
 RUN_PORT = int(os.environ.get("PORT", "5000"))
 RUN_DEBUG = os.environ.get("FLASK_DEBUG", "").strip().lower() in {"1", "true", "yes", "on"}
 DETECTION_FRAME_WIDTH = max(256, int(os.environ.get("DETECTION_FRAME_WIDTH", "320")))
+MODEL_LOAD_RETRY_SECONDS = max(10, int(os.environ.get("MODEL_LOAD_RETRY_SECONDS", "60")))
 VIOLATION_AUTO_SUBMIT_SCORE = 20
 SECTION_ORDER = ["section_a", "section_b", "section_c"]
 SECTION_LABELS = {
@@ -697,16 +700,21 @@ prepare_database_file()
 init_db()
 
 def get_model():
-    global YOLO_MODEL
+    global YOLO_MODEL, YOLO_MODEL_FAILED_AT
     if YOLO_MODEL is False:
-        return None
+        if YOLO_MODEL_FAILED_AT and (datetime.now() - YOLO_MODEL_FAILED_AT).total_seconds() < MODEL_LOAD_RETRY_SECONDS:
+            return None
+        YOLO_MODEL = None
+        YOLO_MODEL_FAILED_AT = None
     if YOLO_MODEL is None:
         try:
+            gc.collect()
             from ultralytics import YOLO as UltralyticsYOLO
             YOLO_MODEL = UltralyticsYOLO('yolov8n.pt')
         except Exception as error:
             app.logger.exception("YOLO model unavailable: %s", error)
             YOLO_MODEL = False
+            YOLO_MODEL_FAILED_AT = datetime.now()
             return None
     return YOLO_MODEL
 
@@ -1959,7 +1967,7 @@ def handle_frame(data):
         face_count = len(faces)
         results = None
         if model is not None:
-            results = model(frame, verbose=False, conf=0.25, imgsz=min(416, DETECTION_FRAME_WIDTH), max_det=5)[0]
+            results = model(frame, verbose=False, conf=0.2, imgsz=min(416, DETECTION_FRAME_WIDTH), max_det=8)[0]
         alerts, people = [], 0
         current = ACTIVE_EXAMS.get(sid, {})
         now = datetime.now()
