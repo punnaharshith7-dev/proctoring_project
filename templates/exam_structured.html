@@ -1051,7 +1051,13 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ year_group: yearGroup, answers: collectAnswers() })
                 });
-                const data = await res.json();
+                const raw = await res.text();
+                let data = {};
+                try {
+                    data = raw ? JSON.parse(raw) : {};
+                } catch (parseError) {
+                    throw new Error(raw && raw.includes('<!DOCTYPE') ? 'The server returned an unexpected HTML error page.' : (raw || 'Submission failed'));
+                }
                 if (!res.ok || data.status !== 'success') throw new Error(data.message || 'Submission failed');
                 examSubmitted = true;
                 clearPersistedExamState();
@@ -1200,10 +1206,10 @@
         function getEvidenceFrame() {
             if (video.videoWidth) {
                 const canvas = document.createElement('canvas');
-                canvas.width = 320;
-                canvas.height = 240;
-                canvas.getContext('2d').drawImage(video, 0, 0, 320, 240);
-                latestEvidenceFrame = canvas.toDataURL('image/jpeg', 0.6);
+                canvas.width = 640;
+                canvas.height = 480;
+                canvas.getContext('2d').drawImage(video, 0, 0, 640, 480);
+                latestEvidenceFrame = canvas.toDataURL('image/jpeg', 0.72);
             }
             return latestEvidenceFrame;
         }
@@ -1345,7 +1351,7 @@
                 updateTrustMeter(Number(alert.risk_score || 0), alert.risk_level || 'Low');
             }
             const lower = String(message).toLowerCase();
-            if (lower.includes('phone') || lower.includes('restricted') || lower.includes('loud noise') || lower.includes('multiple people')) flashAlert(message);
+            if (lower.includes('phone') || lower.includes('no face') || lower.includes('restricted') || lower.includes('loud noise') || lower.includes('multiple people')) flashAlert(message);
             if (Number(localViolationScore) > Number(threshold)) {
                 triggerAutoSubmit(threshold);
             }

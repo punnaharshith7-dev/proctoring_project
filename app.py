@@ -2,6 +2,7 @@ import eventlet
 eventlet.monkey_patch()
 
 import sqlite3
+import shutil
 import base64
 import cv2
 import numpy as np
@@ -11,7 +12,9 @@ import json
 import binascii
 import csv
 import io
+import tempfile
 from datetime import datetime, timedelta
+from pathlib import Path
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify, abort, send_file, make_response
 from flask_socketio import SocketIO, emit
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -31,12 +34,17 @@ app.secret_key = os.environ.get("SECRET_KEY", "change-this-secret-in-production"
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 # --- CONFIGURATION ---
-DB_NAME = "proctor_system.db"
+BASE_DIR = Path(__file__).resolve().parent
+BUNDLED_DB_PATH = BASE_DIR / "proctor_system.db"
+DB_RUNTIME_DIR = Path(os.environ.get("PROCTOR_DB_DIR") or (Path(tempfile.gettempdir()) / "proctoring_project"))
+DB_RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
+DB_NAME = os.environ.get("PROCTOR_DB_PATH", str(DB_RUNTIME_DIR / "proctor_system.db"))
 UPLOAD_FOLDER = 'static/profiles'
 VIOLATION_PROOF_FOLDER = 'static/violation_proofs'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 FORBIDDEN_OBJECTS = ['cell phone', 'mobile phone', 'laptop', 'book', 'tablet']
 YOLO_MODEL = None 
+FACE_CASCADE = None
 ACTIVE_EXAMS = {}
 ADMIN_SIDS = set()
 STUDENT_SIDS = {}
@@ -67,6 +75,17 @@ SUGGESTION_LIBRARY = {
     "section_b": "Weak in Section B. Focus on true/false reasoning and review one-line theory facts.",
     "section_c": "Weak in Section C. Practice recall-based questions and write concise fill-in answers.",
 }
+
+
+def prepare_database_file():
+    runtime_path = Path(DB_NAME)
+    runtime_path.parent.mkdir(parents=True, exist_ok=True)
+    if runtime_path.exists():
+        return
+    if BUNDLED_DB_PATH.exists():
+        shutil.copy2(BUNDLED_DB_PATH, runtime_path)
+    else:
+        runtime_path.touch()
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 if not os.path.exists(UPLOAD_FOLDER):
@@ -226,7 +245,7 @@ def create_violation_record(student_id, violation_type, evidence_image=None):
     evidence_path = save_violation_evidence(student_id, evidence_image, violation_type)
     severity, score, matched_rules = classify_violation(violation_type, student_id)
     created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    with sqlite3.connect(DB_NAME) as conn:
+    with get_db_connection() as conn:
         conn.execute(
             """
             INSERT INTO violations (student_id, type, timestamp, evidence_path, severity, score, created_at)
@@ -279,8 +298,11 @@ def ensure_column_exists(cursor, table_name, column_name, column_definition):
 
 
 def get_db_connection():
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, timeout=30, check_same_thread=False)
     conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
+    conn.execute("PRAGMA journal_mode = WAL")
+    conn.execute("PRAGMA busy_timeout = 5000")
     return conn
 
 
@@ -654,10 +676,11 @@ def init_db():
                     generate_password_hash(ADMIN_INITIAL_PASSWORD),
                     "admin",
                     "N/A",
-                ),
-            )
+        ),
+    )
         conn.commit()
 
+prepare_database_file()
 init_db()
 
 def get_model():
@@ -667,8 +690,19 @@ def get_model():
     return YOLO_MODEL
 
 
+def get_face_detector():
+    global FACE_CASCADE
+    if FACE_CASCADE is None:
+        cascade_path = os.path.join(cv2.data.haarcascades, "haarcascade_frontalface_default.xml")
+        detector = cv2.CascadeClassifier(cascade_path)
+        if detector.empty():
+            app.logger.warning("Failed to load face cascade from %s", cascade_path)
+        FACE_CASCADE = detector
+    return FACE_CASCADE
+
+
 def get_student_year_group(student_id):
-    with sqlite3.connect(DB_NAME) as conn:
+    with get_db_connection() as conn:
         user = conn.execute("SELECT semester FROM users WHERE id=?", (student_id,)).fetchone()
 
     if not user or not user[0]:
@@ -821,13 +855,13 @@ def login():
         # All IDs are treated as Uppercase for consistency
         uid = request.form.get('user_id').strip().upper()
         pwd = request.form.get('password')
-        with sqlite3.connect(DB_NAME) as conn:
+        with get_db_connection() as conn:
             user = conn.execute("SELECT * FROM users WHERE id=?", (uid,)).fetchone()
         
         if user and check_password_hash(user[2], pwd):
             session['user_id'], session['name'], session['role'] = user[0], user[1], user[3]
             if user[3] == 'student':
-                with sqlite3.connect(DB_NAME) as activity_conn:
+                with get_db_connection() as activity_conn:
                     activity_conn.execute(
                         "INSERT INTO login_activity (user_id, role, login_at) VALUES (?, ?, ?)",
                         (user[0], user[3], datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -851,7 +885,7 @@ def forgot_password():
         phone = request.form.get('phone').strip()
         new_password = request.form.get('new_password')
         
-        with sqlite3.connect(DB_NAME) as conn:
+        with get_db_connection() as conn:
             user = conn.execute("SELECT id FROM users WHERE id=? AND phone=?", (userid, phone)).fetchone()
             if user:
                 conn.execute("UPDATE users SET password=? WHERE id=?", (generate_password_hash(new_password), userid))
@@ -892,7 +926,7 @@ def register_user():
         return jsonify({"status": "error", "message": "Roll Number must be exactly 10 alphanumeric characters."}), 400
 
     try:
-        with sqlite3.connect(DB_NAME) as conn:
+        with get_db_connection() as conn:
             if conn.execute("SELECT id FROM users WHERE id=?", (userid,)).fetchone():
                 return jsonify({"status": "error", "message": "UserID already exists!"}), 400
             
@@ -1084,7 +1118,7 @@ def update_student_profile():
         return jsonify({"status": "error", "message": "Phone number is required."}), 400
 
     try:
-        with sqlite3.connect(DB_NAME) as conn:
+        with get_db_connection() as conn:
             current_user = conn.execute(
                 "SELECT profile_pic FROM users WHERE id=? AND role='student'",
                 (session['user_id'],)
@@ -1621,7 +1655,7 @@ def export_admin_data(export_format):
 def delete_student(sid):
     if session.get('role') != 'admin': return jsonify({"status": "error"}), 403
     try:
-        with sqlite3.connect(DB_NAME) as conn:
+        with get_db_connection() as conn:
             proof_rows = conn.execute(
                 "SELECT evidence_path FROM violations WHERE student_id=?",
                 (sid,)
@@ -1640,7 +1674,7 @@ def delete_student(sid):
 @app.route('/admin/clear_logs', methods=['POST'])
 def clear_logs():
     if session.get('role') != 'admin': return jsonify({"status": "error"}), 403
-    with sqlite3.connect(DB_NAME) as conn:
+    with get_db_connection() as conn:
         proof_rows = conn.execute("SELECT evidence_path FROM violations").fetchall()
         conn.execute("DELETE FROM violations")
         conn.commit()
@@ -1690,27 +1724,31 @@ def submit_exam():
     result["risk_score"] = risk_score
     result["risk_level"] = risk_level
     result["attempt_number"] = attempt_number
-    ACTIVE_EXAMS.pop(session['user_id'], None)
 
-    with sqlite3.connect(DB_NAME) as conn:
-        conn.execute("""
-            INSERT INTO results (student_id, score, total, violations, date, year_group, section_scores, analysis_json, risk_score, risk_level, attempt_number, admin_decision)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            session['user_id'],
-            result['total_score'],
-            result['total_marks'],
-            "Check Logs",
-            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            year_group,
-            section_scores_json,
-            analysis_json,
-            risk_score,
-            risk_level,
-            attempt_number,
-            "pending"
-        ))
-        conn.commit()
+    try:
+        with get_db_connection() as conn:
+            conn.execute("""
+                INSERT INTO results (student_id, score, total, violations, date, year_group, section_scores, analysis_json, risk_score, risk_level, attempt_number, admin_decision)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                session['user_id'],
+                result['total_score'],
+                result['total_marks'],
+                "Check Logs",
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                year_group,
+                section_scores_json,
+                analysis_json,
+                risk_score,
+                risk_level,
+                attempt_number,
+                "pending"
+            ))
+            conn.commit()
+        ACTIVE_EXAMS.pop(session['user_id'], None)
+    except sqlite3.OperationalError as error:
+        app.logger.exception("Failed to save exam submission for %s", session.get('user_id'))
+        return jsonify({"status": "error", "message": f"Could not save the exam result: {error}"}), 500
     return jsonify({"status": "success", "result": result})
 
 @app.route('/exam/<int:group>')
@@ -1835,13 +1873,22 @@ def handle_exam_status(data):
 @socketio.on('video_frame')
 def handle_frame(data):
     model = get_model()
+    sid = data.get('student_info', 'Unknown').split(' - ')[0]
     try:
-        sid = data.get('student_info', 'Unknown').split(' - ')[0]
         header, encoded = data['image'].split(",", 1)
         nparr = np.frombuffer(base64.b64decode(encoded), np.uint8)
         frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        if frame is None:
+            app.logger.warning("Unable to decode video frame for student %s", sid)
+            return
         h, w, _ = frame.shape
-        results = model(frame, verbose=False, conf=0.25)[0]
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        face_detector = get_face_detector()
+        faces = []
+        if face_detector is not None and not face_detector.empty():
+            faces = face_detector.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(50, 50))
+        face_count = len(faces)
+        results = model(frame, verbose=False, conf=0.2, imgsz=640)[0]
         alerts, people = [], 0
         current = ACTIVE_EXAMS.get(sid, {})
         now = datetime.now()
@@ -1869,14 +1916,14 @@ def handle_frame(data):
                 if not last_seen or (now - last_seen).total_seconds() >= 5:
                     alerts.append(f"Detected: {label}")
                     current[object_key] = now.strftime("%Y-%m-%d %H:%M:%S")
-        if people > 1:
+        if people > 1 or face_count > 1:
             last_multiple = parse_timestamp(current.get("multiple_faces_at"))
             if not last_multiple or (now - last_multiple).total_seconds() >= 5:
                 alerts.append("Multiple People")
                 current["multiple_faces_at"] = now.strftime("%Y-%m-%d %H:%M:%S")
             current["no_face_started_at"] = ""
             current["no_face_logged"] = False
-        elif people == 0:
+        elif face_count == 0:
             no_face_started_at = parse_timestamp(current.get("no_face_started_at"))
             if not no_face_started_at:
                 current["no_face_started_at"] = now.strftime("%Y-%m-%d %H:%M:%S")
@@ -1899,8 +1946,8 @@ def handle_frame(data):
         else:
             refresh_live_exam(sid, current_frame=data.get('image'))
         ACTIVE_EXAMS[sid] = {**ACTIVE_EXAMS.get(sid, {}), **current}
-    except:
-        pass
+    except Exception:
+        app.logger.exception("Failed to process video frame for student %s", sid)
 
 @socketio.on('audio_violation')
 def handle_audio(data):
