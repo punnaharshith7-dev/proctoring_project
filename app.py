@@ -1698,29 +1698,57 @@ def clear_logs():
 @app.route('/submit_exam', methods=['POST'])
 def submit_exam():
     try:
+        app.logger.info(
+            "submit_exam called user=%s role=%s content_length=%s content_type=%s",
+            session.get('user_id'),
+            session.get('role'),
+            request.content_length,
+            request.content_type,
+        )
         if session.get('role') != 'student':
+            app.logger.warning("submit_exam rejected: not a student user=%s", session.get('user_id'))
             return jsonify({"status": "error"}), 403
 
         data = request.get_json(silent=True) or {}
         year_group = data.get('year_group')
         answers = data.get('answers', {})
+        app.logger.info(
+            "submit_exam payload user=%s year_group=%s answer_count=%s",
+            session.get('user_id'),
+            year_group,
+            len(answers) if isinstance(answers, dict) else 'n/a',
+        )
 
         try:
             year_group = int(year_group)
         except (TypeError, ValueError):
+            app.logger.warning("submit_exam rejected: invalid year group user=%s raw=%s", session.get('user_id'), year_group)
             return jsonify({"status": "error", "message": "Invalid year group."}), 400
 
         allowed_group = get_student_year_group(session['user_id'])
         if year_group != allowed_group:
+            app.logger.warning(
+                "submit_exam rejected: unauthorized access user=%s allowed=%s requested=%s",
+                session.get('user_id'),
+                allowed_group,
+                year_group,
+            )
             return jsonify({"status": "error", "message": "Unauthorized exam access."}), 403
 
         attempt_summary = get_attempt_summary(session['user_id'], year_group)
         if not attempt_summary["allowed"]:
+            app.logger.warning(
+                "submit_exam rejected: attempt limit user=%s year_group=%s reason=%s",
+                session.get('user_id'),
+                year_group,
+                attempt_summary["reason"],
+            )
             return jsonify({"status": "error", "message": attempt_summary["reason"]}), 400
 
         try:
             result = grade_exam_with_bank(year_group, session['user_id'], answers)
         except ValueError:
+            app.logger.exception("submit_exam failed: exam paper missing user=%s year_group=%s", session.get('user_id'), year_group)
             return jsonify({"status": "error", "message": "Exam paper not found."}), 404
 
         section_scores_json = json.dumps([
@@ -1767,6 +1795,14 @@ def submit_exam():
             app.logger.exception("Failed to save exam submission for %s", session.get('user_id'))
             return jsonify({"status": "error", "message": f"Could not save the exam result: {error}"}), 500
 
+        app.logger.info(
+            "submit_exam success user=%s score=%s/%s risk=%s/%s",
+            session.get('user_id'),
+            result.get('total_score'),
+            result.get('total_marks'),
+            result.get('risk_score'),
+            result.get('risk_level'),
+        )
         return jsonify({"status": "success", "result": json.loads(analysis_json)})
     except Exception as error:
         app.logger.exception("Unexpected failure while submitting exam for %s", session.get("user_id"))
