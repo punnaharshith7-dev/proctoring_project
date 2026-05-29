@@ -697,9 +697,14 @@
             const root = document.documentElement;
             const request = root.requestFullscreen || root.webkitRequestFullscreen || root.mozRequestFullScreen || root.msRequestFullscreen;
             if (!isFullscreenActive() && request) {
-                return Promise.resolve(request.call(root)).catch(() => {
+                try {
+                    return Promise.resolve(request.call(root)).catch(() => {
+                        showToast('Fullscreen required', 'Enable fullscreen mode before starting the secure exam.', 'warn');
+                    });
+                } catch (error) {
                     showToast('Fullscreen required', 'Enable fullscreen mode before starting the secure exam.', 'warn');
-                });
+                    return Promise.resolve();
+                }
             }
             if (!request) {
                 showToast('Fullscreen unavailable', 'This browser does not support fullscreen. Keep the exam tab open and focused.', 'warn');
