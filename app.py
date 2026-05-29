@@ -306,6 +306,19 @@ def get_db_connection():
     return conn
 
 
+def json_default(value):
+    if hasattr(value, "item"):
+        try:
+            return value.item()
+        except Exception:
+            pass
+    if isinstance(value, (datetime, timedelta)):
+        return str(value)
+    if isinstance(value, set):
+        return list(value)
+    return str(value)
+
+
 def parse_timestamp(value):
     if not value:
         return None
@@ -1684,72 +1697,80 @@ def clear_logs():
 
 @app.route('/submit_exam', methods=['POST'])
 def submit_exam():
-    if session.get('role') != 'student': return jsonify({"status": "error"}), 403
-    data = request.get_json(silent=True) or {}
-    year_group = data.get('year_group')
-    answers = data.get('answers', {})
-
     try:
-        year_group = int(year_group)
-    except (TypeError, ValueError):
-        return jsonify({"status": "error", "message": "Invalid year group."}), 400
+        if session.get('role') != 'student':
+            return jsonify({"status": "error"}), 403
 
-    allowed_group = get_student_year_group(session['user_id'])
-    if year_group != allowed_group:
-        return jsonify({"status": "error", "message": "Unauthorized exam access."}), 403
-    attempt_summary = get_attempt_summary(session['user_id'], year_group)
-    if not attempt_summary["allowed"]:
-        return jsonify({"status": "error", "message": attempt_summary["reason"]}), 400
+        data = request.get_json(silent=True) or {}
+        year_group = data.get('year_group')
+        answers = data.get('answers', {})
 
-    try:
-        result = grade_exam_with_bank(year_group, session['user_id'], answers)
-    except ValueError:
-        return jsonify({"status": "error", "message": "Exam paper not found."}), 404
+        try:
+            year_group = int(year_group)
+        except (TypeError, ValueError):
+            return jsonify({"status": "error", "message": "Invalid year group."}), 400
 
-    section_scores_json = json.dumps([
-        {
-            "id": section["id"],
-            "title": section["title"],
-            "score": section["score"],
-            "total": section["total"]
-        }
-        for section in result["section_results"]
-    ])
-    analysis_json = json.dumps(result)
-    current_exam = ACTIVE_EXAMS.get(session['user_id'], {})
-    exam_started_at = current_exam.get("exam_started_at")
-    since_time = parse_timestamp(exam_started_at) if exam_started_at else datetime.now() - timedelta(hours=2)
-    risk_score, risk_level = compute_risk_for_student(session['user_id'], since_time)
-    attempt_number = attempt_summary["attempts_used"] + 1
-    result["risk_score"] = risk_score
-    result["risk_level"] = risk_level
-    result["attempt_number"] = attempt_number
+        allowed_group = get_student_year_group(session['user_id'])
+        if year_group != allowed_group:
+            return jsonify({"status": "error", "message": "Unauthorized exam access."}), 403
 
-    try:
-        with get_db_connection() as conn:
-            conn.execute("""
-                INSERT INTO results (student_id, score, total, violations, date, year_group, section_scores, analysis_json, risk_score, risk_level, attempt_number, admin_decision)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                session['user_id'],
-                result['total_score'],
-                result['total_marks'],
-                "Check Logs",
-                datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                year_group,
-                section_scores_json,
-                analysis_json,
-                risk_score,
-                risk_level,
-                attempt_number,
-                "pending"
-            ))
-            conn.commit()
-        ACTIVE_EXAMS.pop(session['user_id'], None)
-    except sqlite3.OperationalError as error:
-        app.logger.exception("Failed to save exam submission for %s", session.get('user_id'))
-        return jsonify({"status": "error", "message": f"Could not save the exam result: {error}"}), 500
-    return jsonify({"status": "success", "result": result})
+        attempt_summary = get_attempt_summary(session['user_id'], year_group)
+        if not attempt_summary["allowed"]:
+            return jsonify({"status": "error", "message": attempt_summary["reason"]}), 400
+
+        try:
+            result = grade_exam_with_bank(year_group, session['user_id'], answers)
+        except ValueError:
+            return jsonify({"status": "error", "message": "Exam paper not found."}), 404
+
+        section_scores_json = json.dumps([
+            {
+                "id": section["id"],
+                "title": section["title"],
+                "score": section["score"],
+                "total": section["total"]
+            }
+            for section in result["section_results"]
+        ], default=json_default)
+        current_exam = ACTIVE_EXAMS.get(session['user_id'], {})
+        exam_started_at = current_exam.get("exam_started_at")
+        since_time = parse_timestamp(exam_started_at) if exam_started_at else datetime.now() - timedelta(hours=2)
+        risk_score, risk_level = compute_risk_for_student(session['user_id'], since_time)
+        attempt_number = attempt_summary["attempts_used"] + 1
+        result["risk_score"] = risk_score
+        result["risk_level"] = risk_level
+        result["attempt_number"] = attempt_number
+        analysis_json = json.dumps(result, default=json_default)
+
+        try:
+            with get_db_connection() as conn:
+                conn.execute("""
+                    INSERT INTO results (student_id, score, total, violations, date, year_group, section_scores, analysis_json, risk_score, risk_level, attempt_number, admin_decision)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    session['user_id'],
+                    result['total_score'],
+                    result['total_marks'],
+                    "Check Logs",
+                    datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    year_group,
+                    section_scores_json,
+                    analysis_json,
+                    risk_score,
+                    risk_level,
+                    attempt_number,
+                    "pending"
+                ))
+                conn.commit()
+            ACTIVE_EXAMS.pop(session['user_id'], None)
+        except sqlite3.OperationalError as error:
+            app.logger.exception("Failed to save exam submission for %s", session.get('user_id'))
+            return jsonify({"status": "error", "message": f"Could not save the exam result: {error}"}), 500
+
+        return jsonify({"status": "success", "result": json.loads(analysis_json)})
+    except Exception as error:
+        app.logger.exception("Unexpected failure while submitting exam for %s", session.get("user_id"))
+        return jsonify({"status": "error", "message": f"Could not submit the exam right now: {error}"}), 500
 
 @app.route('/exam/<int:group>')
 def exam(group):
