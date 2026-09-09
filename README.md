@@ -1,7 +1,6 @@
 # Proctoring Project
 
-This project is now set up as a deployable Flask website.
-
+This project is a Flask-based online examination proctoring system.
 ## Run locally
 
 ```bash
