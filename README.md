@@ -21,3 +21,4 @@ The app needs HTTPS for camera and microphone access in the browser, so a hosted
 ## Project Contribution
 
 This project implements a proctoring system for monitoring students during online examinations.
+Jenkins CI test.
