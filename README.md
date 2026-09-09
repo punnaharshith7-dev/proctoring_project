@@ -18,3 +18,6 @@ Set these environment variables in the hosting dashboard before publishing:
 - `ADMIN_INITIAL_PASSWORD` if you want the app to bootstrap a fresh admin account
 
 The app needs HTTPS for camera and microphone access in the browser, so a hosted deployment is the right path for sharing it by link.
+## Project Contribution
+
+This project implements a proctoring system for monitoring students during online examinations.
